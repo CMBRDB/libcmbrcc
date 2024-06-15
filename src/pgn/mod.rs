@@ -54,7 +54,6 @@ fn parse_half_move_count<'a>(
 
 pub fn parse_pgn(input_filename: &str) -> Result<Vec<PgnGame>, Box<dyn Error + '_>> {
     // TODO(#7): Add variations support
-    // TODO(#8): Add comments support
 
     let lines = utils::read_lines(input_filename)?;
 

@@ -5,6 +5,7 @@ edition = "2021"
 license = "GPL-3.0"
 
 [dependencies]
+# clap = { version = "4.5.7", features = ["derive"] }
 clap = { version = "0.1.0", path = "clap-dynamic", package = "clap-dynamic" }
 clap_complete = "4.5.5"
 exec = "0.3.1"
@@ -29,6 +30,11 @@ codegen-units = 2048
 [profile.bolt]
 inherits = "release"
 strip = false
+
+[profile.profile]
+inherits = "release"
+strip = false
+debug = true
 
 [profile.size]
 inherits = "release"
