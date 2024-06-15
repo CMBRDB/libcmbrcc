@@ -81,7 +81,7 @@ pub fn parse_pgn(input_filename: &str) -> Result<Vec<PgnGame>, Box<dyn Error + '
             let line_char_index_start = line_char_index;
 
             // TODO(#9): (MAYBE) Replace half-move count parsing with a smarter method
-            // TODO: (MAYBE) Abstract this away to see the performance overhead of this
+            // TODO(#10): (MAYBE) Abstract this away to see the performance overhead of this
             // This is basically extra parsing because half-move count can be easily calculated by setting it at the start of a variation and then just incrementing it
             if char.is_ascii_digit() {
                 let mut num_buffer = String::new();
