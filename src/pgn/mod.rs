@@ -169,7 +169,6 @@ pub fn parse_pgn(input_filename: &str) -> Result<Vec<PgnGame>, Box<dyn Error + '
             game_index += 1;
             vec_games.insert(game_index, PgnGame::default());
 
-            #[allow(unused_assignments)]
             defer = false;
         }
     }

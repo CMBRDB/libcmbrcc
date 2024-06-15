@@ -1,12 +1,6 @@
 // TODO(#3): Define and Write documentation for the CMBR Standard.
 // TODO(#6): Seperate the cli and libcmbr
 
-#![feature(
-    panic_payload_as_str,
-    error_generic_member_access,
-    stmt_expr_attributes
-)]
-
 mod eval_args;
 mod pgn;
 mod tests;
@@ -117,15 +111,15 @@ fn main() {
     panic::set_hook(Box::new(|panic_info| {
         if let Some(location) = panic_info.location() {
             println!(
-                "panic occurred in file '{}' at line {}. {}",
+                "panic occurred in file '{}' at line {}. {:?}",
                 location.file(),
                 location.line(),
-                panic_info.payload_as_str().unwrap()
+                panic_info.payload()
             );
         } else {
             println!(
-                "panic occurred but can't get location information...: {}",
-                panic_info.payload_as_str().unwrap()
+                "panic occurred but can't get location information...: {:?}",
+                panic_info.payload()
             );
         }
     }));
