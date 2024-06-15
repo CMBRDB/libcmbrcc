@@ -10,6 +10,48 @@ pub use headers::*;
 
 use crate::{pgn_move_to_half_move, utils};
 
+// NOTE: After profiling I've found that this function only uses 0.5% of the total samples.
+//       it does NOT cause significant overhead therefore isn't worth optimizing
+fn parse_half_move_count<'a>(
+    bytes: &'a [u8],
+    line_char_index: &'a mut usize,
+    line_len: usize,
+    input_filename: &'a str,
+    line_char_index_start: u32,
+) -> Result<u16, Box<dyn Error + 'a>> {
+    let mut num_buffer = String::new();
+
+    while *line_char_index < line_len && bytes[*line_char_index] != b'.' {
+        num_buffer.push(bytes[*line_char_index] as char);
+        *line_char_index += 1;
+    }
+
+    *line_char_index += 1;
+
+    let parsed_num = num_buffer.as_str().parse::<u16>();
+
+    if parsed_num.is_err() {
+        return Err(Box::new(PgnError {
+            code: 101,
+            message: format!("Couldn't parse number: {num_buffer}"),
+            location: Location {
+                file: input_filename,
+                line: line_len as u32,
+                col: line_char_index_start,
+            },
+        }));
+    }
+
+    let mut half_move_count = pgn_move_to_half_move!(parsed_num.unwrap());
+
+    if *line_char_index + 1 < line_len && bytes[*line_char_index] == b'.' {
+        half_move_count += 1;
+        *line_char_index += 2;
+    }
+
+    Ok(half_move_count)
+}
+
 pub fn parse_pgn(input_filename: &str) -> Result<Vec<PgnGame>, Box<dyn Error + '_>> {
     // TODO(#7): Add variations support
     // TODO(#8): Add comments support
@@ -80,38 +122,21 @@ pub fn parse_pgn(input_filename: &str) -> Result<Vec<PgnGame>, Box<dyn Error + '
             let char = bytes[line_char_index];
             let line_char_index_start = line_char_index;
 
-            // TODO(#9): (MAYBE) Replace half-move count parsing with a smarter method
-            // TODO(#10): (MAYBE) Abstract this away to see the performance overhead of this
-            // This is basically extra parsing because half-move count can be easily calculated by setting it at the start of a variation and then just incrementing it
             if char.is_ascii_digit() {
-                let mut num_buffer = String::new();
+                let result = parse_half_move_count(
+                    bytes,
+                    &mut line_char_index,
+                    line_len,
+                    input_filename,
+                    line_char_index_start as u32,
+                );
 
-                while line_char_index < line_len && bytes[line_char_index] != b'.' {
-                    num_buffer.push(bytes[line_char_index] as char);
-                    line_char_index += 1;
-                }
-                line_char_index += 1;
-
-                let parsed_num = num_buffer.as_str().parse::<u16>();
-
-                if parsed_num.is_err() {
-                    return Err(Box::new(PgnError {
-                        code: 101,
-                        message: format!("Couldn't parse number: {num_buffer}"),
-                        location: Location {
-                            file: input_filename,
-                            line: line_len as u32,
-                            col: line_char_index_start as u32,
-                        },
-                    }));
+                if result.is_err() {
+                    // TODO(#11): Return the error instead of panicing
+                    panic!("Coudln't parse half move count");
                 }
 
-                half_move_count = pgn_move_to_half_move!(parsed_num.unwrap());
-
-                if line_char_index + 1 < line_len && bytes[line_char_index] == b'.' {
-                    half_move_count += 1;
-                    line_char_index += 2;
-                }
+                half_move_count = result.unwrap();
             } else if char.is_ascii_alphabetic() {
                 let mut buffer = String::new();
 
@@ -129,6 +154,11 @@ pub fn parse_pgn(input_filename: &str) -> Result<Vec<PgnGame>, Box<dyn Error + '
                 });
 
                 half_move_count += 1;
+            } else if char == b'{' {
+                while line_char_index < line_len && bytes[line_char_index] != b'}' {
+                    line_char_index += 1;
+                }
+                line_char_index += 1;
             }
 
             line_char_index += 1;
