@@ -1,6 +1,6 @@
 target/
 data/*.zip
-data/*.pgn
+data/twic*.pgn
 mkramdisk
 *.data
 *.perf
