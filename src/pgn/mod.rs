@@ -12,7 +12,7 @@ use crate::{pgn_move_to_half_move, utils};
 
 pub fn parse_pgn(input_filename: &str) -> Result<Vec<PgnGame>, Box<dyn Error + '_>> {
     // TODO(#7): Add variations support
-    // TODO: Add comments support
+    // TODO(#8): Add comments support
 
     let lines = utils::read_lines(input_filename)?;
 
