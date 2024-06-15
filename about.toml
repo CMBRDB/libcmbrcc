@@ -3,5 +3,6 @@ accepted = [
     "MIT",
     "Unicode-DFS-2016",
     "GPL-3.0",
-    "MPL-2.0"
+    "MPL-2.0",
+    "Unlicense"
 ]

@@ -9,4 +9,5 @@ pre-commit:
 	cargo fmt
 	cargo test
 	cargo deny check
+	cargo machete
 	cargo about generate about.hbs > NOTICE.html

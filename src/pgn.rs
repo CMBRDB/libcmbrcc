@@ -14,8 +14,16 @@ pub struct PgnGame {
 }
 
 pub type PgnHeaders = Map<String, String, 24>;
-pub type PgnMove = SmolStr;
+// Move string, half move count (odd = white, even = black)
+pub type PgnMove = (SmolStr, u16);
 pub type PgnVariation = Tree<PgnMove>;
+
+#[macro_export]
+macro_rules! pgn_move_to_half_move {
+    ($arg:expr) => {
+        (2 * $arg - 1)
+    };
+}
 
 impl PgnGame {
     #[inline(always)]

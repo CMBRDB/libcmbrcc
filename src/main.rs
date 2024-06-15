@@ -3,6 +3,7 @@
 
 mod eval_args;
 mod pgn;
+mod tests;
 mod tree;
 mod utils;
 

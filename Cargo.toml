@@ -5,12 +5,12 @@ edition = "2021"
 license = "GPL-3.0"
 
 [dependencies]
-clap = { version = "4.5.7", features = ["derive"] }
+clap = { version = "0.1.0", path = "clap-dynamic", package = "clap-dynamic" }
 clap_complete = "4.5.5"
 exec = "0.3.1"
 micromap = "0.0.15"
-smartstring = "1.0.1"
-smol_str = "0.2.2"
+smartstring = { version = "1.0.1", default-features = false }
+smol_str = { version = "0.2.2", default-features = false }
 
 [profile.release]
 opt-level = 3
@@ -38,3 +38,9 @@ opt-level = "s"
 [profile.size_extreme]
 inherits = "release"
 opt-level = "z"
+
+[profile.test]
+codegen-units = 2048
+incremental = true
+lto = true
+opt-level = 3
