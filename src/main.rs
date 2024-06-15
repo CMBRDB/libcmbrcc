@@ -70,7 +70,7 @@ pub struct Pgn2CmbrArgs {
 }
 
 #[derive(Parser, Debug, Clone, PartialEq, Eq)]
-#[command(author, version, about, long_about = None, name="cmbrcc")]
+#[command(author, version, about, long_about = None, name="cmbrcc", arg_required_else_help = true)]
 pub struct Cli {
     #[arg(long = "generate", value_enum)]
     generator: Option<Shell>,
@@ -108,22 +108,6 @@ fn validate_args(cli: &mut Cli) {
 }
 
 fn main() {
-    panic::set_hook(Box::new(|panic_info| {
-        if let Some(location) = panic_info.location() {
-            println!(
-                "panic occurred in file '{}' at line {}. {:?}",
-                location.file(),
-                location.line(),
-                panic_info.payload()
-            );
-        } else {
-            println!(
-                "panic occurred but can't get location information...: {:?}",
-                panic_info.payload()
-            );
-        }
-    }));
-
     let mut cli = Cli::parse();
 
     if let Some(generator) = cli.generator {
@@ -131,16 +115,6 @@ fn main() {
 
         eprintln!("Generating completion file for {generator:?}...");
         print_completions(generator, &mut cmd);
-
-        return;
-    }
-
-    if cli.command == None {
-        if std::io::stdin().is_terminal() {
-            let _ = exec::Command::new(std::env::args().next().unwrap())
-                .arg("--help")
-                .exec();
-        }
 
         return;
     }
