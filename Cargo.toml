@@ -30,6 +30,7 @@ codegen-units = 2048
 [profile.bolt]
 inherits = "release"
 strip = false
+debug = true
 
 [profile.profile]
 inherits = "release"
