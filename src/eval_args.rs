@@ -1,4 +1,5 @@
-pub use super::Cli;
+use super::pgn;
+use super::Cli;
 
 pub fn eval_args(cli: &Cli) {
     match cli.command.as_ref().unwrap() {
@@ -6,8 +7,8 @@ pub fn eval_args(cli: &Cli) {
             // TODO(#1): Implement CMBR2PGN
         }
 
-        crate::CommandE::Pgn2cmbr(_args) => {
-            // TODO(#2): Implement PGN2CMBR
+        crate::CommandE::Pgn2cmbr(args) => {
+            let pgn = pgn::parse_pgn(&args.input);
         }
 
         crate::CommandE::License => {

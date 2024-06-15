@@ -2,6 +2,9 @@
 // TODO(#4): Implement Libcmbr, a library for parsing CMBR files
 
 mod eval_args;
+mod pgn;
+mod tree;
+mod utils;
 
 use clap::{Args, Command, CommandFactory, Parser, Subcommand};
 use clap_complete::{generate, Generator, Shell};
