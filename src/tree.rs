@@ -1,7 +1,7 @@
 #[derive(Debug, PartialEq, Eq, Default, Clone)]
 pub struct Tree<T> {
     // NOTE: Using a whole ass vec here feels a bit icky
-    // TODO: (MAYBE) Replace this with a smaller vec, or make the user suply a vec-like type
+    // TODO(#5): (MAYBE) Replace this with a smaller vec, or make the user suply a vec-like type
     children: Vec<Box<Tree<T>>>,
     value: T,
 }
