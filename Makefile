@@ -9,4 +9,4 @@ pre-commit:
 	cargo fmt
 	cargo test
 	cargo deny check
-	cargo about generate about.hbs > license.html
+	cargo about generate about.hbs > NOTICE.html
