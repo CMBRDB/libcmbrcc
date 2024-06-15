@@ -1,5 +1,6 @@
 // TODO(#3): Define and Write documentation for the CMBR Standard.
 // TODO(#4): Implement Libcmbr, a library for parsing CMBR files
+// TODO(#6): Seperate the cli and libcmbr
 
 mod eval_args;
 mod pgn;
