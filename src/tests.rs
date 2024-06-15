@@ -1,2 +1,2 @@
-#[path = "../test/pgn/headers.rs"]
-pub mod headers;
+#[path = "../test/pgn/mod.rs"]
+pub mod pgn;

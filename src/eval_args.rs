@@ -9,6 +9,8 @@ pub fn eval_args(cli: &Cli) {
 
         crate::CommandE::Pgn2cmbr(args) => {
             let pgn = pgn::parse_pgn(&args.input);
+
+            println!("{:#?}", pgn);
         }
 
         crate::CommandE::License => {

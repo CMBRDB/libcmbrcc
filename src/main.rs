@@ -1,6 +1,12 @@
 // TODO(#3): Define and Write documentation for the CMBR Standard.
 // TODO(#6): Seperate the cli and libcmbr
 
+#![feature(
+    panic_payload_as_str,
+    error_generic_member_access,
+    stmt_expr_attributes
+)]
+
 mod eval_args;
 mod pgn;
 mod tests;
@@ -12,6 +18,8 @@ use clap_complete::{generate, Generator, Shell};
 use std::io::IsTerminal;
 use std::process::exit;
 use std::thread::available_parallelism;
+
+use std::panic;
 
 #[derive(Subcommand, Clone, Debug, PartialEq, Eq)]
 pub enum CommandE {
@@ -106,6 +114,22 @@ fn validate_args(cli: &mut Cli) {
 }
 
 fn main() {
+    panic::set_hook(Box::new(|panic_info| {
+        if let Some(location) = panic_info.location() {
+            println!(
+                "panic occurred in file '{}' at line {}. {}",
+                location.file(),
+                location.line(),
+                panic_info.payload_as_str().unwrap()
+            );
+        } else {
+            println!(
+                "panic occurred but can't get location information...: {}",
+                panic_info.payload_as_str().unwrap()
+            );
+        }
+    }));
+
     let mut cli = Cli::parse();
 
     if let Some(generator) = cli.generator {
