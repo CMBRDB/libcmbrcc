@@ -119,7 +119,6 @@ version = "0.0.0"
 dependencies = [
  "clap-dynamic",
  "clap_complete",
- "micromap",
  "smartstring",
 ]
 
@@ -140,12 +139,6 @@ name = "is_terminal_polyfill"
 version = "1.70.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8478577c03552c21db0e2724ffb8986a5ce7af88107e6be5d2ee6e158c12800"
-
-[[package]]
-name = "micromap"
-version = "0.0.15"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c5b72ada413a5bd6bc65d6eef149fdc5138298f3bb89653d1a521f0fea7f9c73"
 
 [[package]]
 name = "proc-macro2"

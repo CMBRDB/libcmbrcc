@@ -4,7 +4,6 @@
 mod eval_args;
 mod pgn;
 mod tests;
-mod tree;
 mod utils;
 
 use clap::{Args, Command, CommandFactory, Parser, Subcommand};
