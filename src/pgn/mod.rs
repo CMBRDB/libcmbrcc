@@ -211,6 +211,11 @@ pub fn parse_pgn(input_filename: &str) -> Result<Vec<PgnToken>, Box<dyn Error + 
                 line_char_index += 1;
             } else if char == b'$' {
                 // TODO(#13): Support NAG parsing
+                // http://www.saremba.de/chessgml/standards/pgn/pgn-complete.htm#c8.2.4
+                eprintln!(
+                    "[WARNING] NAG parsing is not supported. encountered NAG on line {}",
+                    i
+                );
 
                 while line_char_index < line_len && bytes[line_char_index] != b' ' {
                     line_char_index += 1;
