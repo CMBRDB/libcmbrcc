@@ -1,14 +1,39 @@
 use super::pgn;
 use super::Cli;
 
+use std::{error::Error, fs::File};
+use memmap2::Mmap;
+
 pub fn eval_args(cli: &Cli) {
+    use std::process::exit;
+
     match cli.command.as_ref().unwrap() {
         crate::CommandE::Cmbr2pgn(_args) => {
             // TODO(#1): Implement CMBR2PGN
         }
 
         crate::CommandE::Pgn2cmbr(args) => {
-            let _ = pgn::parse_pgn(args.input.clone()).unwrap();
+            let file = File::open(args.input.clone());
+            
+            if file.is_err() {
+                println!("[ERROR] {}", file.err().unwrap());
+                exit(1);
+            }
+
+            let file = unsafe { file.unwrap_unchecked() };
+            let mmap = unsafe { Mmap::map(&file) };
+
+            if mmap.is_err() {
+                println!("[ERROR] {}", mmap.err().unwrap());
+                exit(1);
+            }
+
+            let mut mmap = unsafe { mmap.unwrap_unchecked() };
+            let tokens = pgn::parse_pgn(&mut mmap);
+
+            for token in tokens {
+                println!("{token}");
+            }
         }
 
         crate::CommandE::License => {
@@ -18,7 +43,7 @@ pub fn eval_args(cli: &Cli) {
             println!("under the conditions of the GPL-3.0 License;");
             println!("\nSee https://github.com/datawater/cmbr");
 
-            std::process::exit(0);
+            exit(0);
         }
     }
 }
