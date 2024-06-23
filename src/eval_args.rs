@@ -1,8 +1,8 @@
 use super::pgn;
 use super::Cli;
 
-use std::{error::Error, fs::File};
 use memmap2::Mmap;
+use std::fs::File;
 
 pub fn eval_args(cli: &Cli) {
     use std::process::exit;
@@ -16,7 +16,7 @@ pub fn eval_args(cli: &Cli) {
             // TODO(#14): Implement PGN2CMBR
 
             let file = File::open(args.input.clone());
-            
+
             if file.is_err() {
                 println!("[ERROR] {}", file.err().unwrap());
                 exit(1);

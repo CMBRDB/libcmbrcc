@@ -6,6 +6,7 @@ pub struct Tree<T> {
     value: T,
 }
 
+#[allow(dead_code)]
 impl<T> Tree<T>
 where
     T: Default,
