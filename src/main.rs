@@ -4,16 +4,10 @@
 
 mod eval_args;
 mod pgn;
-mod tests;
-mod utils;
 
 use clap::{Args, Command, CommandFactory, Parser, Subcommand};
 use clap_complete::{generate, Generator, Shell};
-use std::io::IsTerminal;
-use std::process::exit;
-use std::thread::available_parallelism;
-
-use std::panic;
+use std::{process::exit, thread::available_parallelism};
 
 #[derive(Subcommand, Clone, Debug, PartialEq, Eq)]
 pub enum CommandE {

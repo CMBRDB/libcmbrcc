@@ -1,11 +1,12 @@
 push: commit
 	git push origin main
 
-commit: pre-commit
+commit: check
 	git add .
 	git commit
 
-pre-commit:
+check:
+	cargo check
 	cargo fmt
 	cargo test
 	cargo deny check

@@ -8,8 +8,8 @@ license = "GPL-3.0"
 # clap = { version = "4.5.7", features = ["derive"] }
 clap = { version = "0.1.0", path = "clap-dynamic", package = "clap-dynamic" }
 clap_complete = "4.5.5"
-# micromap = "0.0.15"
-smartstring = { version = "1.0.1", default-features = false }
+memmap2 = "0.9.4"
+pgn-lexer = { git = "https://github.com/datawater/pgn-lexer" }
 
 [profile.release]
 opt-level = 3

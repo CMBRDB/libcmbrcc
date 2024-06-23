@@ -16,7 +16,6 @@ allow = [
     "MIT",
     "Apache-2.0",
     "Unicode-DFS-2016",
-    "MPL-2.0",
     "Unlicense"
 ]
 confidence-threshold = 0.8
@@ -48,4 +47,4 @@ skip-tree = []
 unknown-registry = "warn"
 unknown-git = "warn"
 allow-registry = ["https://github.com/rust-lang/crates.io-index"]
-allow-git = []
+allow-git = ["https://github.com/datawater/pgn-lexer"]
