@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq, Eq, Default)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Tree<T> {
     // NOTE: Using a whole ass vec here feels a bit icky
     // TODO(#5): (MAYBE) Replace this with a smaller vec, or make the user suply a vec-like type
@@ -7,15 +7,12 @@ pub struct Tree<T> {
 }
 
 #[allow(dead_code)]
-impl<T> Tree<T>
-where
-    T: Default,
-{
+impl<T> Tree<T> {
     #[inline(always)]
     pub fn new() -> Self {
         return Tree {
             children: Vec::new(),
-            value: T::default(),
+            value: unsafe { std::mem::zeroed() },
         };
     }
 

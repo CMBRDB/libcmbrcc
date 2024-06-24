@@ -4,5 +4,6 @@ accepted = [
     "Unicode-DFS-2016",
     "GPL-3.0",
     "MPL-2.0",
-    "Unlicense"
+    "Unlicense",
+    "Unicode-3.0"
 ]

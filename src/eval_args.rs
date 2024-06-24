@@ -1,8 +1,12 @@
+use crate::pgn::pgn_tokens_to_ast;
+
 use super::pgn;
 use super::Cli;
 
 use memmap2::Mmap;
 use std::fs::File;
+use std::io::BufWriter;
+use std::io::Write;
 
 pub fn eval_args(cli: &Cli) {
     use std::process::exit;
@@ -31,11 +35,15 @@ pub fn eval_args(cli: &Cli) {
             }
 
             let mut mmap = unsafe { mmap.unwrap_unchecked() };
-            let tokens = pgn::parse_pgn(&mut mmap);
+            let mut tokens = pgn::parse_pgn(&mut mmap);
 
-            for token in tokens {
-                println!("{token}");
-            }
+            std::hint::black_box(pgn_tokens_to_ast(&mut tokens));
+
+            // let ast = pgn_tokens_to_ast(&mut tokens);
+
+            // let file = File::create(&args.output).unwrap();
+            // let mut bufwriter = BufWriter::new(file);
+            // writeln!(bufwriter, "{:#?}", ast).unwrap();
         }
 
         crate::CommandE::License => {
