@@ -1,6 +1,4 @@
 pub mod ast;
-mod tree;
-
 pub use ast::*;
 
 use std::collections::VecDeque;
