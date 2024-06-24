@@ -4,7 +4,7 @@ use pgn_lexer::parser::Token;
 use std::collections::VecDeque;
 
 // TODO(#16): Implement tests for ast generating
-// TODO: Oh shit, currently this program uses 12x the memory of the input file :sob: maybe reduce that ??
+// TODO(#17): Oh shit, currently this program uses 12x the memory of the input file :sob: maybe reduce that ??
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub enum PgnToken<'a> {
