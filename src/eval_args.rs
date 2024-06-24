@@ -5,8 +5,6 @@ use super::Cli;
 
 use memmap2::Mmap;
 use std::fs::File;
-use std::io::BufWriter;
-use std::io::Write;
 
 pub fn eval_args(cli: &Cli) {
     use std::process::exit;
@@ -39,12 +37,8 @@ pub fn eval_args(cli: &Cli) {
 
             std::hint::black_box(pgn_tokens_to_ast(&mut tokens));
 
-            // let ast = pgn_tokens_to_ast(&mut tokens);
-
-            // let file = File::create(&args.output).unwrap();
-            // let mut bufwriter = BufWriter::new(file);
-            // writeln!(bufwriter, "{:#?}", ast).unwrap();
-        }
+            // TODO(#15): Implement the 3rd and final step of processing PGN files - Conversion.
+         }
 
         crate::CommandE::License => {
             println!("libcmbr, cmbrcc  Copyright (C) 2024 datawater");
