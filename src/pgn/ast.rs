@@ -20,7 +20,7 @@ pub struct PgnVariation<'a>(Vec<PgnToken<'a>>);
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct PgnGame<'a>((Vec<Token<'a>>, LiteMap<u16, PgnVariation<'a>>));
 
-pub fn pgn_tokens_to_ast<'a>(tokens: &mut VecDeque<Token<'a>>) -> Vec<PgnGame<'a>> {
+pub fn build_pgn_ast<'a>(tokens: &mut VecDeque<Token<'a>>) -> Vec<PgnGame<'a>> {
     let mut tree: Vec<PgnGame<'a>> = Vec::new();
     let mut game_number = 0;
     let mut amount_of_encountered_variations = 1;
@@ -58,7 +58,7 @@ macro_rules! push_token {
             .get_mut($variation_number)
             .unwrap()
             .0
-            .push($token.clone())
+            .push($token)
     };
 }
 

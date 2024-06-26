@@ -5,3 +5,4 @@ mkramdisk
 *.data
 *.perf
 log.log
+ast.rs_

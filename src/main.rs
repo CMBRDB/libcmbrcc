@@ -1,82 +1,153 @@
-// TODO(#3): Define and Write documentation for the CMBR Standard.
-// TODO(#6): Seperate the cli and libcmbr
+// TODO: Define and Write documentation for the CMBR Standard.
+// TODO: Seperate the cli and libcmbr
+#![feature(test)]
 
 mod eval_args;
 mod pgn;
+mod tests;
 
-use clap::{Args, Command, CommandFactory, Parser, Subcommand};
-use clap_complete::{generate, Generator, Shell};
+use lexopt::prelude::*;
 use std::{process::exit, thread::available_parallelism};
 
-#[derive(Subcommand, Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum CommandE {
     Cmbr2pgn(Cmbr2PgnArgs),
     Pgn2cmbr(Pgn2CmbrArgs),
     License,
 }
 
-#[derive(Args, Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Cmbr2PgnArgs {
-    input_file: String,
-
-    #[arg(short, long)]
+    input: String,
     output: String,
-
-    #[arg(
-        short = 'T',
-        default_value = "1",
-        help = "Uses # threads. Pass 0 to use all"
-    )]
     threads_n: u16,
 }
 
-#[derive(Args, Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Pgn2CmbrArgs {
     input: String,
-
-    #[arg(short, long)]
     output: String,
-
-    #[arg(
-        short = 'c',
-        long,
-        default_value = "false",
-        help = "Enable Zstandard compression."
-    )]
     enable_compression: bool,
-
-    #[arg(
-        long,
-        default_value = "9",
-        help = "Specifies Zstandard compression level. (Ranges 1 to 22)",
-        required = false
-    )]
     zstd_compression_level: u8,
-
-    #[arg(
-        short = 'T',
-        default_value = "1",
-        help = "Uses <THREADS_N> threads. Pass 0 to use all",
-        required = false
-    )]
     threads_n: u16,
 }
 
-#[derive(Parser, Debug, Clone, PartialEq, Eq)]
-#[command(author, version, about, long_about = None, name="cmbrcc", arg_required_else_help = true)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Cli {
-    #[arg(long = "generate", value_enum)]
-    generator: Option<Shell>,
-
-    #[command(subcommand)]
     command: Option<CommandE>,
 }
 
-fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
-    generate(gen, cmd, cmd.get_name().to_string(), &mut std::io::stdout());
+fn print_usage() {
+    // TODO: A better usage/help-command..
+
+    println!("\nUsage: cmbr {{COMMAND}} [OPTIONS]");
+    println!("note: Options inside of square brackets ([]) are optional\n");
+    println!("Commands:");
+    println!("  cmbr2pgn --input {{INPUT_FILE}} [--output {{OUTPUT_FILE}} --threads_n {{AMOUNT_OF_THREADS}} --enable_compression ]");
+    println!("  pgncmbr  --input {{INPUT_FILE}} [--output {{OUTPUT_FILE}} --threads_n {{AMOUNT_OF_THREADS}} ]");
+    println!("  license");
+}
+
+fn parse_args() -> Cli {
+    let mut parser = lexopt::Parser::from_env();
+    let mut command = None;
+
+    while let Some(arg) = parser.next().unwrap() {
+        match arg {
+            Short('h') | Long("help") => {
+                print_usage();
+                exit(0);
+            }
+
+            Short('T') | Long("threads_n") => {
+                let threads_n = parser.value().unwrap().parse().unwrap();
+
+                if let Some(CommandE::Cmbr2pgn(ref mut args)) = command {
+                    args.threads_n = threads_n;
+                } else if let Some(CommandE::Pgn2cmbr(ref mut args)) = command {
+                    args.threads_n = threads_n;
+                }
+            }
+
+            Short('o') | Long("output") => {
+                let output = parser.value().unwrap().into_string().unwrap();
+
+                if let Some(CommandE::Cmbr2pgn(ref mut args)) = command {
+                    args.output = output;
+                } else if let Some(CommandE::Pgn2cmbr(ref mut args)) = command {
+                    args.output = output;
+                }
+            }
+
+            Short('i') | Long("input") => {
+                let input = parser.value().unwrap().into_string().unwrap();
+
+                if let Some(CommandE::Cmbr2pgn(ref mut args)) = command {
+                    args.input = input.clone();
+                } else if let Some(CommandE::Pgn2cmbr(ref mut args)) = command {
+                    args.input = input.clone();
+                }
+            }
+
+            Short('c') | Long("enable_compression") => {
+                let enable_compression = parser.value().unwrap().parse().unwrap();
+
+                if let Some(CommandE::Pgn2cmbr(ref mut args)) = command {
+                    args.enable_compression = enable_compression;
+                }
+            }
+
+            Value(val) => {
+                if command.is_none() {
+                    let cmd = val.to_str().unwrap();
+
+                    match cmd {
+                        "cmbr2pgn" => {
+                            command = Some(CommandE::Cmbr2pgn(Cmbr2PgnArgs {
+                                input: String::new(),
+                                output: String::new(),
+                                threads_n: 1,
+                            }));
+                        }
+
+                        "pgn2cmbr" => {
+                            command = Some(CommandE::Pgn2cmbr(Pgn2CmbrArgs {
+                                input: String::new(),
+                                output: String::new(),
+                                enable_compression: false,
+                                zstd_compression_level: 9,
+                                threads_n: 1,
+                            }));
+                        }
+
+                        "license" => {
+                            command = Some(CommandE::License);
+                        }
+
+                        _ => {
+                            eprintln!("[ERROR] Unknown command: {}", cmd);
+                            exit(1);
+                        }
+                    }
+                }
+            }
+
+            _ => {
+                eprintln!("[ERROR] Unknown argument: {:?}", arg);
+                exit(1);
+            }
+        }
+    }
+
+    Cli { command }
 }
 
 fn validate_args(cli: &mut Cli) {
+    if cli.command.is_none() {
+        eprintln!("[ERROR] Expected a subcommand. Run `cmbrcc --help` for help.");
+        exit(1);
+    }
+
     match cli.command.as_mut().unwrap() {
         CommandE::Pgn2cmbr(args) => {
             if args.zstd_compression_level < 1 || args.zstd_compression_level > 22 {
@@ -87,11 +158,21 @@ fn validate_args(cli: &mut Cli) {
             if args.threads_n == 0 {
                 args.threads_n = available_parallelism().unwrap().get().try_into().unwrap();
             }
+
+            if args.input.is_empty() {
+                eprintln!("[ERROR] Expected an input file name\nRun `cmbrcc --help` for help.");
+                exit(1);
+            }
         }
 
         CommandE::Cmbr2pgn(args) => {
             if args.threads_n == 0 {
                 args.threads_n = available_parallelism().unwrap().get().try_into().unwrap();
+            }
+
+            if args.input.is_empty() {
+                eprintln!("[ERROR] Expected an input file name");
+                exit(1);
             }
         }
 
@@ -101,16 +182,7 @@ fn validate_args(cli: &mut Cli) {
 }
 
 fn main() {
-    let mut cli = Cli::parse();
-
-    if let Some(generator) = cli.generator {
-        let mut cmd = Cli::command();
-
-        eprintln!("Generating completion file for {generator:?}...");
-        print_completions(generator, &mut cmd);
-
-        return;
-    }
+    let mut cli = parse_args();
 
     validate_args(&mut cli);
     eval_args::eval_args(&cli);

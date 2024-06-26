@@ -6,7 +6,7 @@ use std::collections::VecDeque;
 use memmap2::Mmap;
 use pgn_lexer::parser::{self, Token};
 
-pub fn parse_pgn<'a>(input_mmap: &'a mut Mmap) -> VecDeque<Token<'a>> {
+pub fn lex_pgn<'a>(input_mmap: &'a mut Mmap) -> VecDeque<Token<'a>> {
     let mut bytes = &input_mmap[..];
     if bytes[0..3] == [239u8, 187u8, 191u8] {
         bytes = &bytes[3..];
@@ -15,4 +15,8 @@ pub fn parse_pgn<'a>(input_mmap: &'a mut Mmap) -> VecDeque<Token<'a>> {
     let tokens = parser::PGNTokenIterator::new(bytes);
 
     return tokens.collect();
+}
+
+pub fn parse_pgn<'a>(input_mmap: &'a mut Mmap) -> Vec<PgnGame<'a>> {
+    return build_pgn_ast(&mut lex_pgn(input_mmap));
 }

@@ -5,9 +5,7 @@ edition = "2021"
 license = "GPL-3.0"
 
 [dependencies]
-# clap = { version = "4.5.7", features = ["derive"] }
-clap = { version = "0.1.0", path = "clap-dynamic", package = "clap-dynamic" }
-clap_complete = "4.5.5"
+lexopt = "0.3.0"
 litemap = "0.7.3"
 memmap2 = "0.9.4"
 pgn-lexer = { git = "https://github.com/datawater/pgn-lexer" }
@@ -50,3 +48,6 @@ codegen-units = 2048
 incremental = true
 lto = true
 opt-level = 3
+
+[dev-dependencies]
+project-root = "0.2.2"

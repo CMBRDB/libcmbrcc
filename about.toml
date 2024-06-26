@@ -1,9 +1,6 @@
 accepted = [
     "Apache-2.0",
     "MIT",
-    "Unicode-DFS-2016",
     "GPL-3.0",
-    "MPL-2.0",
-    "Unlicense",
     "Unicode-3.0"
 ]

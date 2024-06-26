@@ -1,7 +1,5 @@
-use crate::pgn::pgn_tokens_to_ast;
-
-use super::pgn;
 use super::Cli;
+use crate::pgn::parse_pgn;
 
 use memmap2::Mmap;
 use std::fs::File;
@@ -16,11 +14,11 @@ pub fn eval_args(cli: &Cli) {
 
         crate::CommandE::Pgn2cmbr(args) => {
             // TODO(#14): Implement PGN2CMBR
-
-            let file = File::open(args.input.clone());
+            let file_name = args.input.clone();
+            let file = File::open(&file_name);
 
             if file.is_err() {
-                println!("[ERROR] {}", file.err().unwrap());
+                eprintln!("[ERROR] {}. File name: {file_name}", file.err().unwrap());
                 exit(1);
             }
 
@@ -28,17 +26,16 @@ pub fn eval_args(cli: &Cli) {
             let mmap = unsafe { Mmap::map(&file) };
 
             if mmap.is_err() {
-                println!("[ERROR] {}", mmap.err().unwrap());
+                eprintln!("[ERROR] {}. File name: {file_name}", mmap.err().unwrap());
                 exit(1);
             }
 
             let mut mmap = unsafe { mmap.unwrap_unchecked() };
-            let mut tokens = pgn::parse_pgn(&mut mmap);
 
-            std::hint::black_box(pgn_tokens_to_ast(&mut tokens));
+            std::hint::black_box(parse_pgn(&mut mmap));
 
             // TODO(#15): Implement the 3rd and final step of processing PGN files - Conversion.
-         }
+        }
 
         crate::CommandE::License => {
             println!("libcmbr, cmbrcc  Copyright (C) 2024 datawater");
