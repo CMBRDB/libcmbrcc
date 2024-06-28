@@ -12,6 +12,7 @@ pgn-lexer = { git = "https://github.com/datawater/pgn-lexer" }
 
 [features]
 safe_u24 = []
+benchmark = []
 
 [profile.release]
 opt-level = 3

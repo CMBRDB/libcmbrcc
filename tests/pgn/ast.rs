@@ -1,3 +1,5 @@
+#[cfg(feature = "benchmark")]
+#[feature(test)]
 extern crate test;
 
 #[cfg(test)]
@@ -6,7 +8,9 @@ mod pgn_tests {
     use project_root::get_project_root;
     use std::fs::File;
 
+    #[cfg(feature = "benchmark")]
     use super::test::Bencher;
+
     use crate::pgn;
 
     #[test]
@@ -40,6 +44,7 @@ mod pgn_tests {
         assert_eq!(format!("{:?}", ast), ast_expected);
     }
 
+    #[cfg(feature = "benchmark")]
     #[bench]
     fn bench_ast(b: &mut Bencher) {
         let file_path = get_project_root().unwrap().join("data/twic1544.pgn");
