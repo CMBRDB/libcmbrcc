@@ -49,13 +49,13 @@ pub fn build_pgn_ast<'a>(tokens: &mut VecDeque<Token<'a>>) -> Vec<PgnGame<'a>> {
 }
 
 macro_rules! push_token {
-    ($tree:expr, $game_number:expr, $variation_number:expr, $token:expr) => {
+    ($tree:expr, $game_number:expr, $variation_depth:expr, $token:expr) => {
         $tree
             .get_mut($game_number as usize)
             .unwrap()
             .0
              .1
-            .get_mut($variation_number)
+            .get_mut($variation_depth)
             .unwrap()
             .0
             .push($token)
@@ -66,7 +66,7 @@ fn next_token<'a>(
     tokens: &mut VecDeque<Token<'a>>,
     tree: &mut Vec<PgnGame<'a>>,
     game_number: &mut u32,
-    variation_number: u16,
+    variation_depth: u16,
     amount_of_encountered_variations: &mut u16,
 ) {
     // NOTE: I don't know if this is slow. (Like this whole approach) I'm just gonna pretend it isn't until it causes problems
@@ -78,12 +78,7 @@ fn next_token<'a>(
         | Token::NAG(_)
         | Token::MoveAnnotation(_)
         | Token::MoveNumber(_, _) => {
-            push_token!(
-                tree,
-                *game_number,
-                &variation_number,
-                PgnToken::Token(token)
-            )
+            push_token!(tree, *game_number, &variation_depth, PgnToken::Token(token))
         }
         Token::TagSymbol(_) | Token::TagString(_) => tree
             .get_mut(*game_number as usize)
@@ -108,33 +103,31 @@ fn next_token<'a>(
                 let value = &mut tree.get_unchecked_mut(*game_number as usize).0;
 
                 value.0 = Vec::new();
-                value.1.insert(variation_number, PgnVariation::default());
+                value.1.insert(variation_depth, PgnVariation::default());
             }
         }
         Token::StartVariation(_) => {
-            let new_variation_number = *amount_of_encountered_variations * (variation_number + 1);
+            let new_variation_depth = *amount_of_encountered_variations * (variation_depth + 1);
 
             *amount_of_encountered_variations += 1;
 
             push_token!(
                 tree,
                 *game_number,
-                &variation_number,
-                PgnToken::VariationPointer(new_variation_number)
+                &variation_depth,
+                PgnToken::VariationPointer(new_variation_depth)
             );
 
             unsafe {
                 let value = &mut tree.get_unchecked_mut(*game_number as usize).0;
-                value
-                    .1
-                    .insert(new_variation_number, PgnVariation::default());
+                value.1.insert(new_variation_depth, PgnVariation::default());
             }
 
             next_token(
                 tokens,
                 tree,
                 game_number,
-                new_variation_number,
+                new_variation_depth,
                 amount_of_encountered_variations,
             );
         }
@@ -148,7 +141,7 @@ fn next_token<'a>(
             tokens,
             tree,
             game_number,
-            variation_number,
+            variation_depth,
             amount_of_encountered_variations,
         );
     }

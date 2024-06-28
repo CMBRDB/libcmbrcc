@@ -1,7 +1,9 @@
 // TODO: Define and Write documentation for the CMBR Standard.
 // TODO: Seperate the cli and libcmbr
 #![feature(test)]
+#![allow(non_upper_case_globals)]
 
+mod cmbr;
 mod eval_args;
 mod pgn;
 mod tests;

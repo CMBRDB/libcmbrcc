@@ -10,11 +10,12 @@ litemap = "0.7.3"
 memmap2 = "0.9.4"
 pgn-lexer = { git = "https://github.com/datawater/pgn-lexer" }
 
+[features]
+safe_u24 = []
+
 [profile.release]
 opt-level = 3
 strip = true
-debug-assertions = false
-overflow-checks = false
 lto = "fat"
 incremental = true
 codegen-units = 1
@@ -24,11 +25,7 @@ opt-level = 1
 lto = "thin"
 incremental = true
 codegen-units = 2048
-
-[profile.bolt]
-inherits = "release"
-strip = false
-debug = true
+split-debuginfo = "unpacked"
 
 [profile.profile]
 inherits = "release"

@@ -25,6 +25,9 @@ or
 cargo run -- help
 ```
 
+### Documentation
+The documentation (WIP/Unfinished) is provided as a latex and [pdf](./docs/CMBR.pdf) file
+
 ### License
 The software is distributed under the GPL-3.0 License
 

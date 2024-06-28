@@ -1,0 +1,110 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{array}
+
+\title{CMBR Docs}
+\author{datawizard}
+\date{Specification Version 0.0.1}
+
+\begin{document}
+
+\maketitle
+
+\section{Definitions}
+u24 - 24 bit unsigned integer \\
+u8  - 8  bit unsigned integer \\
+NAG - Numerical annotation glyph. See \href{https://w.wiki/AWUT}{Wikipedia} for more information. \\
+Variation table - A table that denotes  \\
+
+\section{Move notation}
+The move is represented with an u24 (First part) with an additional u8 (Second part) if needed for NAG notation.
+\subsection{First part}
+\begin{equation}
+    0\text{b}\underbrace{000000}_\text{To square} \underbrace{000000}_\text{From square}
+    \underbrace{0000}_\text{Piece}\underbrace{00000000}_\text{Flags}
+\end{equation}
+
+To and from squares are defined as an index of a chessboard square. The values are between 0-63. Where 0 is 'a1' and 63 is 'h8'.
+\par Pieces value represent some piece. See the table for more info
+\par The flags are defined as individual values. They're bit-wise anded (\&) together to get the final value.
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+ \hline
+ \multicolumn{3}{|c|}{CMBR Flag enumeration} \\
+ \hline
+ Flag name & Binary value & Note \\
+ \hline
+ FlagNone & 0b00000000 & Empty flag \\
+ \hline
+ FlagCheck & 0b00000001 & Move is a check \\
+ \hline
+ FlagMate & 0b00000010 & Move is a checkmate \\
+ \hline
+ FlagCapture & 0b00000100 & Move is a capture \\
+ \hline
+ FlagNag & 0b00001000 & The next 8 bits in the file \\
+  & &  are an u8 denoting the NAG value \\ 
+ \hline
+ FlagPromotesBishop & 0b01000000 & Move promotes to bishop \\
+ \hline
+ FlagPromotesKnight & 0b01010000 & Move promotes to knight \\
+ \hline
+ FlagPromotesRook & 0b01100000 & Move promotes to rook \\
+ \hline
+ FlagPromotesQueen & 0b01110000 & Move promotes to queen \\
+ \hline
+ FlagPromotesQueen & 0b01110000 & Move promotes to queen \\
+ \hline
+ FlagIsVariationPointeromotesQueen & 0b10000000 & If this flag is set \\
+ & & The first 16 bits are replaced \\
+ & & with an index to the variations table \\
+ \hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{ |c|c| }
+ \hline
+ \multicolumn{2}{|c|}{Pieces to binary value table} \\
+ \hline
+ Piece & Binary value \\
+ \hline
+ White pawn & 0b0000 \\
+ \hline
+ White knight & 0b0001 \\
+ \hline
+ White bishop & 0b0010 \\
+ \hline
+ White rook & 0b0011 \\
+ \hline
+ White queen & 0b0100 \\
+ \hline
+ White king & 0b0101 \\
+ \hline
+ White castles short & 0b0110 \\
+ \hline
+ White castles long & 0b0111 \\
+ \hline
+ Black pawn & 0b1000 \\
+ \hline
+ Black knight & 0b1001 \\
+ \hline
+ Black bishop & 0b1010 \\
+ \hline
+ Black rook & 010011 \\
+ \hline
+ Black queen & 0b1100 \\
+ \hline
+ Black king & 0b1101 \\
+ \hline
+ Black castles short & 0b1110 \\
+ \hline
+ Black castles long & 0b1111 \\
+ \hline
+\end{tabular}
+\end{center}
+
+\end{document}

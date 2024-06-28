@@ -6,3 +6,8 @@ mkramdisk
 *.perf
 log.log
 ast.rs_
+*.aux
+*.dvi
+*.log
+*.out
+*.synctex
