@@ -1,5 +1,3 @@
-#[cfg(feature = "benchmark")]
-#[feature(test)]
 extern crate test;
 
 #[cfg(test)]
