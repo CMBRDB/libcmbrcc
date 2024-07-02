@@ -73,7 +73,6 @@ fn next_token<'a>(
 ) {
     // NOTE: I don't know if this is slow. (Like this whole approach) I'm just gonna pretend it isn't until it causes problems
     // NOTE: This should be safe when called correctly. this function is only used locally, so it
-    // should be
     // SAFE: Should be safe
     let token = unsafe { tokens.pop_front().unwrap_unchecked() };
 

@@ -1,5 +1,3 @@
-// TODO: Define and Write documentation for the CMBR Standard.
-// TODO: Seperate the cli and libcmbr
 mod eval_args;
 
 use lexopt::prelude::*;
