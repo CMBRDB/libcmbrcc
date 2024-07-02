@@ -34,7 +34,7 @@ pub struct Cli {
 }
 
 fn print_usage() {
-    // TODO: A better usage/help-command..
+    // TODO(#18): A better usage/help-command..
 
     println!("\nUsage: cmbr {{COMMAND}} [OPTIONS]");
     println!("note: Options inside of square brackets ([]) are optional\n");
