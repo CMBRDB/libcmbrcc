@@ -1,12 +1,6 @@
 // TODO: Define and Write documentation for the CMBR Standard.
 // TODO: Seperate the cli and libcmbr
-#![allow(non_upper_case_globals)]
-#![feature(test)]
-
-mod cmbr;
 mod eval_args;
-mod pgn;
-mod tests;
 
 use lexopt::prelude::*;
 use std::{process::exit, thread::available_parallelism};
@@ -46,7 +40,7 @@ fn print_usage() {
     println!("note: Options inside of square brackets ([]) are optional\n");
     println!("Commands:");
     println!("  cmbr2pgn --input {{INPUT_FILE}} [--output {{OUTPUT_FILE}} --threads_n {{AMOUNT_OF_THREADS}} --enable_compression ]");
-    println!("  pgncmbr  --input {{INPUT_FILE}} [--output {{OUTPUT_FILE}} --threads_n {{AMOUNT_OF_THREADS}} ]");
+    println!("  pgn2cmbr  --input {{INPUT_FILE}} [--output {{OUTPUT_FILE}} --threads_n {{AMOUNT_OF_THREADS}} ]");
     println!("  license");
 }
 

@@ -1,21 +1,23 @@
+use crate::utils::extract_bits_from_num;
+use std::fmt;
 use std::ops::{Add, BitAnd, BitOr, BitXor, Div, Mul, Not, Rem, Shl, Shr, Sub};
 use std::ops::{
     AddAssign, BitAndAssign, BitOrAssign, BitXorAssign, DivAssign, MulAssign, RemAssign, ShlAssign,
     ShrAssign, SubAssign,
 };
 
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(non_camel_case_types)]
 pub struct u24([u8; 3]);
 
 impl u24 {
-    fn to_u32(self) -> u32 {
+    pub fn to_u32(self) -> u32 {
         let u24([a, b, c]) = self;
 
         return u32::from_le_bytes([a, b, c, 0]);
     }
 
-    fn from_u32(n: u32) -> Self {
+    pub fn from_u32(n: u32) -> Self {
         let [a, b, c, _d] = n.to_le_bytes();
 
         #[cfg(feature = "safe_u24")]
@@ -99,5 +101,50 @@ impl u24 {
     #[inline(always)]
     pub fn trailing_zeroes(self) -> u32 {
         return self.to_u32().trailing_zeros() - 8;
+    }
+}
+
+impl From<u32> for u24 {
+    fn from(v: u32) -> Self {
+        return u24::from_u32(v);
+    }
+}
+
+impl From<u24> for u32 {
+    fn from(v: u24) -> Self {
+        return v.to_u32();
+    }
+}
+
+impl fmt::Debug for u24 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return write!(f, "{}", self.to_u32());
+    }
+}
+
+impl fmt::Display for u24 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return write!(f, "{}", self.to_u32());
+    }
+}
+
+impl fmt::Binary for u24 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return write!(f, "{:#026b}", self.to_u32());
+    }
+}
+
+impl fmt::LowerExp for u24 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = self.to_u32();
+        let e = extract_bits_from_num::<u32>;
+        return write!(
+            f,
+            "{:06b} {:06b} {:04b} {:08b}",
+            e(s, 6, 18),
+            e(s, 6, 12),
+            e(s, 4, 8),
+            e(s, 8, 0)
+        );
     }
 }

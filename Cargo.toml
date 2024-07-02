@@ -1,30 +1,29 @@
 [package]
-name = "cmbr"
+name = "cmbrcc"
 version = "0.0.0"
 edition = "2021"
 license = "GPL-3.0"
 
+[workspace]
+
 [dependencies]
 lexopt = "0.3.0"
-litemap = "0.7.3"
 memmap2 = "0.9.4"
-pgn-lexer = { git = "https://github.com/datawater/pgn-lexer" }
+libcmbr = { path = "./libcmbr" }
 
 [features]
 safe_u24 = []
 benchmark = []
 
 [profile.release]
-opt-level = 3
-strip = true
 lto = "fat"
-incremental = true
+incremental = false
 codegen-units = 1
 
 [profile.dev]
 opt-level = 1
 lto = "thin"
-incremental = true
+incremental = false
 codegen-units = 2048
 split-debuginfo = "unpacked"
 
@@ -43,7 +42,7 @@ opt-level = "z"
 
 [profile.test]
 codegen-units = 2048
-incremental = true
+incremental = false
 lto = true
 opt-level = 3
 

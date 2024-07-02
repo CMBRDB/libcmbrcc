@@ -15,10 +15,11 @@ pub enum PgnToken<'a> {
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub struct PgnVariation<'a>(Vec<PgnToken<'a>>);
+pub struct PgnVariation<'a>(pub Vec<PgnToken<'a>>);
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub struct PgnGame<'a>((Vec<Token<'a>>, LiteMap<u16, PgnVariation<'a>>));
+// (`Tokens specific to the game, such as headers, results, etc.`, A map of variations)
+pub struct PgnGame<'a>(pub (Vec<Token<'a>>, LiteMap<u16, PgnVariation<'a>>));
 
 pub fn build_pgn_ast<'a>(tokens: &mut VecDeque<Token<'a>>) -> Vec<PgnGame<'a>> {
     let mut tree: Vec<PgnGame<'a>> = Vec::new();
@@ -26,6 +27,7 @@ pub fn build_pgn_ast<'a>(tokens: &mut VecDeque<Token<'a>>) -> Vec<PgnGame<'a>> {
     let mut amount_of_encountered_variations = 1;
 
     tree.push(PgnGame::default());
+    // SAFE: Safe
     unsafe {
         let value = &mut tree.get_unchecked_mut(0).0;
 
@@ -70,6 +72,9 @@ fn next_token<'a>(
     amount_of_encountered_variations: &mut u16,
 ) {
     // NOTE: I don't know if this is slow. (Like this whole approach) I'm just gonna pretend it isn't until it causes problems
+    // NOTE: This should be safe when called correctly. this function is only used locally, so it
+    // should be
+    // SAFE: Should be safe
     let token = unsafe { tokens.pop_front().unwrap_unchecked() };
 
     match token {
@@ -99,6 +104,7 @@ fn next_token<'a>(
             *amount_of_encountered_variations = 1;
 
             tree.push(PgnGame::default());
+            // SAFE: safe
             unsafe {
                 let value = &mut tree.get_unchecked_mut(*game_number as usize).0;
 
@@ -118,6 +124,7 @@ fn next_token<'a>(
                 PgnToken::VariationPointer(new_variation_depth)
             );
 
+            // SAFE: Safe
             unsafe {
                 let value = &mut tree.get_unchecked_mut(*game_number as usize).0;
                 value.1.insert(new_variation_depth, PgnVariation::default());

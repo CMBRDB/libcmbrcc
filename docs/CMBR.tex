@@ -1,8 +1,6 @@
 \documentclass{article}
-\usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{amsmath}
-\usepackage{array}
 
 \title{CMBR Docs}
 \author{datawizard}
@@ -19,7 +17,7 @@ NAG - Numerical annotation glyph. See \href{https://w.wiki/AWUT}{Wikipedia} for 
 Variation table - A table that denotes  \\
 
 \section{Move notation}
-The move is represented with an u24 (First part) with an additional u8 (Second part) if needed for NAG notation.
+The move is represented with an u24.
 \subsection{First part}
 \begin{equation}
     0\text{b}\underbrace{000000}_\text{To square} \underbrace{000000}_\text{From square}
@@ -45,8 +43,9 @@ To and from squares are defined as an index of a chessboard square. The values a
  \hline
  FlagCapture & 0b00000100 & Move is a capture \\
  \hline
- FlagNag & 0b00001000 & The next 8 bits in the file \\
-  & &  are an u8 denoting the NAG value \\ 
+ FlagNag & 0b00001000 & If this flag is set \\
+  & & The first 8 bits are replaced \\
+  & & with a NAG index \\
  \hline
  FlagPromotesBishop & 0b01000000 & Move promotes to bishop \\
  \hline
@@ -56,9 +55,7 @@ To and from squares are defined as an index of a chessboard square. The values a
  \hline
  FlagPromotesQueen & 0b01110000 & Move promotes to queen \\
  \hline
- FlagPromotesQueen & 0b01110000 & Move promotes to queen \\
- \hline
- FlagIsVariationPointeromotesQueen & 0b10000000 & If this flag is set \\
+ FlagIsVariationPointer & 0b10000000 & If this flag is set \\
  & & The first 16 bits are replaced \\
  & & with an index to the variations table \\
  \hline
@@ -94,7 +91,7 @@ To and from squares are defined as an index of a chessboard square. The values a
  \hline
  Black bishop & 0b1010 \\
  \hline
- Black rook & 010011 \\
+ Black rook & 0b1011 \\
  \hline
  Black queen & 0b1100 \\
  \hline

@@ -1,8 +1,10 @@
 use super::Cli;
-use crate::pgn::parse_pgn;
+use libcmbr::cmbr::{san_to_cmbr, u24};
+use libcmbr::pgn::parse_pgn;
 
 use memmap2::Mmap;
 use std::fs::File;
+use std::io::Write;
 
 pub fn eval_args(cli: &Cli) {
     use std::process::exit;
@@ -22,6 +24,7 @@ pub fn eval_args(cli: &Cli) {
                 exit(1);
             }
 
+            // SAFE: Safe
             let file = unsafe { file.unwrap_unchecked() };
             let mmap = unsafe { Mmap::map(&file) };
 
@@ -30,9 +33,39 @@ pub fn eval_args(cli: &Cli) {
                 exit(1);
             }
 
+            // SAFE: Safe
             let mut mmap = unsafe { mmap.unwrap_unchecked() };
 
-            std::hint::black_box(parse_pgn(&mut mmap));
+            let ast = parse_pgn(&mut mmap);
+            let mut cmbrs = vec![];
+
+            for game in ast {
+                for (_, variation) in game.0 .1 {
+                    let mut board = libcmbr::ChessBoard::new();
+
+                    for token in variation.0 {
+                        match token {
+                            libcmbr::pgn::PgnToken::Token(t) => match t {
+                                libcmbr::pgn::Token::Move(san) => {
+                                    let cmbr = san_to_cmbr(&mut board, san).unwrap();
+                                    cmbrs.push(cmbr);
+                                }
+                                _ => {}
+                            },
+                            _ => {}
+                        }
+                    }
+                }
+            }
+
+            let mut f = File::create(&args.output).unwrap();
+            f.write_all(unsafe {
+                std::slice::from_raw_parts(
+                    cmbrs.as_ptr() as *const u8,
+                    cmbrs.len() * std::mem::size_of::<u24>(),
+                )
+            })
+            .unwrap();
 
             // TODO(#15): Implement the 3rd and final step of processing PGN files - Conversion.
         }

@@ -1,10 +1,12 @@
 pub mod ast;
+mod tests;
 pub use ast::*;
 
 use std::collections::VecDeque;
 
 use memmap2::Mmap;
-use pgn_lexer::parser::{self, Token};
+use pgn_lexer::parser;
+pub use pgn_lexer::parser::Token;
 
 pub fn lex_pgn<'a>(input_mmap: &'a mut Mmap) -> VecDeque<Token<'a>> {
     let mut bytes = &input_mmap[..];
