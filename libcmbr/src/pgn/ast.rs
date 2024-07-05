@@ -6,21 +6,31 @@ use std::collections::VecDeque;
 // TODO(#16): Implement tests for ast generating
 // TODO(#17): Oh shit, currently this program uses 12x the memory of the input file :sob: maybe reduce that ??
 
+/// An enumeration representing different types of PGN tokens.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub enum PgnToken<'a> {
+    /// Represents a token specific to the game, such as a move, header, or result.
     Token(Token<'a>),
+    /// Represents a pointer to a variation.
     VariationPointer(u16),
+    /// Represents no token. This is the default variant.
     #[default]
     None,
 }
 
+/// A structure representing a PGN variation, which is a series of PGN tokens.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct PgnVariation<'a>(pub Vec<PgnToken<'a>>);
 
+/// A structure representing a PGN game.
+///
+/// This consists of:
+/// - A vector of tokens specific to the game, such as headers and results.
+/// - A map of variations, indexed by their respective pointers.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
-// (`Tokens specific to the game, such as headers, results, etc.`, A map of variations)
 pub struct PgnGame<'a>(pub (Vec<Token<'a>>, LiteMap<u16, PgnVariation<'a>>));
 
+/// Builds an ast (represented as `a Vec<PgnGame>`) from the inputted Token list
 pub fn build_pgn_ast<'a>(tokens: &mut VecDeque<Token<'a>>) -> Vec<PgnGame<'a>> {
     let mut tree: Vec<PgnGame<'a>> = Vec::new();
     let mut game_number = 0;

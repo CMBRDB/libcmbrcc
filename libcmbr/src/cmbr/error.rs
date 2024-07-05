@@ -5,6 +5,7 @@ use std::fmt;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 #[repr(u8)]
+/// An enum denoting each error libcmbr can give
 pub enum LibCmbrErrorType {
     #[default]
     Ok = 0,
@@ -12,6 +13,7 @@ pub enum LibCmbrErrorType {
     CrazyHouseNotSupported,
 }
 
+// A struct with libcmbr reports errors
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub struct LibCmbrError {
     kind: LibCmbrErrorType,

@@ -1,5 +1,12 @@
 #!/bin/python3
 
+# Utility checking for unsafes in the code that don't have an override calling them safe. Ex:
+    # This is reported as unsafe
+        # let x = unsafe { std::mem::zeroed() };
+    # However this, is not:
+        # // SAFE: Safe
+        # let x = unsafe { std::mem::zeroed() };
+
 import re
 import sys
 
@@ -18,12 +25,12 @@ def main():
         print("Expected input file. Usage:")
         usage()
         return
-    
+
     if argv[argc_i] == "-h" or argv[argc_i] == "--help":
         print("Usage:")
         usage()
         return
-    
+
     file = open(argv[argc_i])
     lines = file.readlines()
 
@@ -33,7 +40,7 @@ def main():
         if is_unsafe and i == 0:
             print(f"{argv[argc_i]}:{i}")
             continue
-        
+
         last_line_is_comment = re.search(safe_comment_regex, lines[i - 1])
         if is_unsafe and not last_line_is_comment:
             print(f"{argv[argc_i]}:{i + 1}")

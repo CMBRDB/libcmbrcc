@@ -8,6 +8,7 @@ use std::ops::{
 
 #[derive(Copy, Clone, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(non_camel_case_types)]
+/// Unsigned 24bit integer
 pub struct u24([u8; 3]);
 
 impl u24 {

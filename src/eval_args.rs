@@ -7,8 +7,6 @@ use std::fs::File;
 use std::io::Write;
 
 pub fn eval_args(cli: &Cli) {
-    use std::process::exit;
-
     match cli.command.as_ref().unwrap() {
         crate::CommandE::Cmbr2pgn(_args) => {
             // TODO(#1): Implement CMBR2PGN
@@ -21,7 +19,7 @@ pub fn eval_args(cli: &Cli) {
 
             if file.is_err() {
                 eprintln!("[ERROR] {}. File name: {file_name}", file.err().unwrap());
-                exit(1);
+                std::process::exit(1);
             }
 
             // SAFE: Safe
@@ -30,7 +28,7 @@ pub fn eval_args(cli: &Cli) {
 
             if mmap.is_err() {
                 eprintln!("[ERROR] {}. File name: {file_name}", mmap.err().unwrap());
-                exit(1);
+                std::process::exit(1);
             }
 
             // SAFE: Safe
@@ -59,6 +57,7 @@ pub fn eval_args(cli: &Cli) {
             }
 
             let mut f = File::create(&args.output).unwrap();
+            // SAFE: Safe
             f.write_all(unsafe {
                 std::slice::from_raw_parts(
                     cmbrs.as_ptr() as *const u8,
@@ -77,7 +76,7 @@ pub fn eval_args(cli: &Cli) {
             println!("under the conditions of the GPL-3.0 License;");
             println!("\nSee https://github.com/datawater/cmbr");
 
-            exit(0);
+            std::process::exit(0);
         }
     }
 }

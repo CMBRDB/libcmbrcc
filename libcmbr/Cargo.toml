@@ -11,8 +11,13 @@ pgn-lexer = { git = "https://github.com/datawater/pgn-lexer" }
 shakmaty = "0.27.0"
 
 [features]
+default = ["tcmalloc"]
 safe_u24 = []
 benchmark = []
+tcmalloc = ["dep:tcmalloc"]
 
 [dev-dependencies]
 project-root = "0.2.2"
+
+[target.'cfg(not(target_env = "msvc"))'.dependencies]
+tcmalloc = { version = "0.3.0", optional = true }

@@ -2,7 +2,7 @@ use std::ops::{BitAnd, Shl, Shr, Sub};
 
 // Macro stolen from https://stackoverflow.com/a/62759540
 macro_rules! def_enum {
-    ($vis:vis $name:ident => $ty:ty {
+    ($(#[$outer:meta])* $vis:vis $name:ident => $ty:ty {
         $($variant:ident => $val:expr),+
         $(,)?
     }) => {

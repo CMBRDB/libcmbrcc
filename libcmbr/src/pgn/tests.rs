@@ -46,7 +46,9 @@ mod pgn_tests {
     #[cfg(feature = "benchmark")]
     #[bench]
     fn bench_ast(b: &mut Bencher) {
-        let file_path = get_project_root().unwrap().join("data/twic1544.pgn");
+        let file_path = get_project_root()
+            .unwrap()
+            .join("data/fischer_spassky_1992.pgn");
         let file = File::open(file_path.clone());
 
         if file.is_err() {
@@ -174,7 +176,9 @@ mod pgn_tests {
     #[cfg(feature = "benchmark")]
     #[bench]
     fn bench_lex(b: &mut Bencher) {
-        let file_path = get_project_root().unwrap().join("data/twic1544.pgn");
+        let file_path = get_project_root()
+            .unwrap()
+            .join("data/fischer_spassky_1992.pgn");
         let file = File::open(file_path.clone());
 
         if file.is_err() {

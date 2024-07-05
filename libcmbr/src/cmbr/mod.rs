@@ -59,6 +59,7 @@ fn shakmaty_suffix_to_flag(suffix: Suffix) -> u8 {
     };
 }
 
+/// Inputs a SAN string and generates a CMBR-MV from it
 pub fn san_to_cmbr(board: &mut Chess, san_bytes: &[u8]) -> Result<Cmbr, Box<dyn Error>> {
     // safe if called correctly.
     let san_string = unsafe { std::str::from_utf8_unchecked(san_bytes) };
