@@ -1,10 +1,11 @@
 use super::Cli;
-use libcmbr::cmbr::{san_to_cmbr, u24};
+use libcmbr::cmbr::{CmbrFile, SanToCmbrMvConvertor};
 use libcmbr::pgn::parse_pgn;
 
 use memmap2::Mmap;
 use std::fs::File;
 use std::io::Write;
+use std::sync::{Arc, Mutex};
 
 pub fn eval_args(cli: &Cli) {
     match cli.command.as_ref().unwrap() {
@@ -35,38 +36,23 @@ pub fn eval_args(cli: &Cli) {
             let mut mmap = unsafe { mmap.unwrap_unchecked() };
 
             let ast = parse_pgn(&mut mmap);
-            let mut cmbrs = vec![];
+            let convertor = SanToCmbrMvConvertor::new(args.table_mem_limit);
 
-            for game in ast {
-                for (_, variation) in game.0 .1 {
-                    let mut board = libcmbr::ChessBoard::new();
-
-                    for token in variation.0 {
-                        match token {
-                            libcmbr::pgn::PgnToken::Token(t) => match t {
-                                libcmbr::pgn::Token::Move(san) => {
-                                    let cmbr = san_to_cmbr(&mut board, san).unwrap();
-                                    cmbrs.push(cmbr);
-                                }
-                                _ => {}
-                            },
-                            _ => {}
-                        }
-                    }
-                }
-            }
-
-            let mut f = File::create(&args.output).unwrap();
-            // SAFE: Safe
-            f.write_all(unsafe {
-                std::slice::from_raw_parts(
-                    cmbrs.as_ptr() as *const u8,
-                    cmbrs.len() * std::mem::size_of::<u24>(),
-                )
-            })
+            let cmbr_file = CmbrFile::from_ast(
+                ast,
+                Arc::new(Mutex::new(convertor)),
+                args.enable_compression,
+                args.threads_n as usize,
+            )
             .unwrap();
 
-            // TODO(#15): Implement the 3rd and final step of processing PGN files - Conversion.
+            cfg_if::cfg_if! {
+                if #[cfg(feature = "bitcode")] {
+                    let mut f = File::create(&args.output).unwrap();
+                    let serialized = bitcode::serialize(&*cmbr_file.lock().unwrap()).unwrap();
+                    f.write(&serialized[..]).unwrap();
+                }
+            };
         }
 
         crate::CommandE::License => {

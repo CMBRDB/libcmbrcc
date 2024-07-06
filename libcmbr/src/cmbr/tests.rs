@@ -3,7 +3,7 @@ mod cmbr_tests {
     #[allow(unused_imports)]
     use crate::pgn::{self, lex_pgn, Token};
     use crate::{
-        cmbr::{san_to_cmbr, Cmbr},
+        cmbr::{CmbrMv, SanToCmbrMvConvertor},
         pgn::PgnToken,
     };
     use memmap2::Mmap;
@@ -40,7 +40,8 @@ mod cmbr_tests {
         let mut mmap = mmap.unwrap();
 
         let ast = pgn::parse_pgn(&mut mmap);
-        let mut cmbrs: Vec<Cmbr> = vec![];
+        let mut convertor = SanToCmbrMvConvertor::new(/* 16MB */ 16 * 1024 * 1024);
+        let mut cmbrs: Vec<CmbrMv> = vec![];
 
         for game in ast {
             for (_, variation) in game.0 .1 {
@@ -50,7 +51,7 @@ mod cmbr_tests {
                     match token {
                         PgnToken::Token(t) => match t {
                             Token::Move(san) => {
-                                let cmbr = san_to_cmbr(&mut board, san).unwrap();
+                                let cmbr = convertor.san_to_cmbr(&mut board, san).unwrap();
                                 cmbrs.push(cmbr);
                             }
                             _ => {}
@@ -62,7 +63,7 @@ mod cmbr_tests {
             }
         }
 
-        let expected_vec: Vec<Cmbr> = vec![
+        let expected_vec: Vec<CmbrMv> = vec![
             0b011100001100000000000000.into(),
             0b101101110101100000000000.into(),
             0b100100011100000000000000.into(),
@@ -80,9 +81,7 @@ mod cmbr_tests {
     #[cfg(feature = "benchmark")]
     #[bench]
     fn bench_san_cmbr(b: &mut Bencher) {
-        let file_path = get_project_root()
-            .unwrap()
-            .join("data/fischer_spassky_1992.pgn");
+        let file_path = get_project_root().unwrap().join("data/twic1544.pgn");
         let file = File::open(file_path.clone());
 
         if file.is_err() {
@@ -103,9 +102,10 @@ mod cmbr_tests {
 
         let mut mmap = mmap.unwrap();
         let ast = pgn::parse_pgn(&mut mmap);
+        let mut convertor = SanToCmbrMvConvertor::new(/* 128MB */ 128 * 1024 * 1024);
 
         b.iter(|| {
-            for game in &ast {
+            'game: for game in &ast {
                 // This clone is fucking it up
                 for (_, variation) in (&game).0 .1.clone() {
                     let mut board = Chess::new();
@@ -114,7 +114,11 @@ mod cmbr_tests {
                         match token {
                             PgnToken::Token(t) => match t {
                                 Token::Move(san) => {
-                                    san_to_cmbr(&mut board, san).unwrap();
+                                    let cmbr = convertor.san_to_cmbr(&mut board, san);
+
+                                    if cmbr.is_err() {
+                                        continue 'game;
+                                    }
                                 }
                                 _ => {}
                             },

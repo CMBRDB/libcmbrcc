@@ -9,6 +9,10 @@ use std::ops::{
 #[derive(Copy, Clone, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(non_camel_case_types)]
 /// Unsigned 24bit integer
+#[cfg_attr(
+    feature = "bitcode",
+    derive(bitcode::Encode, bitcode::Decode, serde::Serialize, serde::Deserialize)
+)]
 pub struct u24([u8; 3]);
 
 impl u24 {

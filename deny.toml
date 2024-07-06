@@ -15,7 +15,8 @@ ignore = []
 allow = [
     "MIT",
     "Apache-2.0",
-    "Unicode-3.0"
+    "Unicode-3.0",
+    "Unicode-DFS-2016"
 ]
 confidence-threshold = 0.8
 exceptions = [
@@ -37,7 +38,6 @@ deny = [
     { crate = "openssl", use-instead = "rustls" },
     { crate = "openssl-sys", use-instead = "rustls" },
     { crate = "cmake", use-instead = "cc" },
-    { crate = "windows", reason = "bloated and unnecessary", use-instead = "ideally inline bindings, practically, windows-sys" },
 ]
 skip = []
 skip-tree = []

@@ -4,10 +4,14 @@ data/twic*.pgn
 mkramdisk
 *.data
 *.perf
-log.log
+*.log
 ast.rs_
 *.aux
 *.dvi
 *.log
 *.out
 *.synctex
+*.cmbr
+AJ-CORR*
+*.cmbr
+*.data*

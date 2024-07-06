@@ -1,6 +1,6 @@
 [package]
 name = "cmbrcc"
-version = "0.0.0"
+version = "0.1.0-alpha"
 edition = "2021"
 license = "GPL-3.0"
 
@@ -10,10 +10,15 @@ license = "GPL-3.0"
 lexopt = "0.3.0"
 memmap2 = "0.9.4"
 libcmbr = { path = "./libcmbr" }
+cfg-if = "1.0.0"
+bitcode = { version = "0.6.0", features = ["serde"], optional = true }
 
 [features]
-safe_u24 = []
-benchmark = []
+default = ["bitcode"]
+bitcode = ["dep:bitcode"]
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows = "0.58.0"
 
 [profile.release]
 lto = "fat"
