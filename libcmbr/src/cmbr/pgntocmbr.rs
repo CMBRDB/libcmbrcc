@@ -27,7 +27,7 @@ static MOVE_ANNOTATION_TO_NAG: phf::Map<&[u8], u8> = phf_map! {
 };
 
 impl CmbrFile {
-    // TODO: Write tests for CmbrFile::from_ast
+    // TODO(#22): Write tests for CmbrFile::from_ast
     pub fn from_ast(
         ast: Vec<PgnGame>,
         convertor: Arc<Mutex<SanToCmbrMvConvertor>>,
