@@ -62,12 +62,11 @@ fn parse_memory_amount(s: &str) -> Result<u64, ParseMemoryError> {
 
 fn print_usage() {
     // TODO(#20): A better usage/help command
-
     println!("\nUsage: cmbr {{COMMAND}} [OPTIONS]");
     println!("note: Options inside of square brackets ([]) are optional\n");
     println!("Commands:");
-    println!("  cmbr2pgn --input {{INPUT_FILE}} [--output {{OUTPUT_FILE}} --threads_n {{AMOUNT_OF_THREADS}} --enable_compression ]");
-    println!("  pgn2cmbr  --input {{INPUT_FILE}} [--output {{OUTPUT_FILE}} --threads_n {{AMOUNT_OF_THREADS}} ]");
+    println!("  cmbr2pgn --input {{INPUT_FILE}} [--output {{OUTPUT_FILE}} --threads_n {{AMOUNT_OF_THREADS}} --enable_compression --table-memory-limit {{LIMIT}} ]");
+    println!("  pgn2cmbr  --input {{INPUT_FILE}} [--output {{OUTPUT_FILE}} --threads_n {{AMOUNT_OF_THREADS}} --table-memory-limit {{LIMIT}} ]");
     println!("  license");
 }
 

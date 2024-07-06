@@ -2,7 +2,6 @@ use cfg_if::cfg_if;
 
 cfg_if! {
     if #[cfg(target_os = "windows")] {
-        use std::ptr;
         use windows::Win32::System::SystemInformation::{
             GlobalMemoryStatusEx, MEMORYSTATUSEX
         };
@@ -11,7 +10,6 @@ cfg_if! {
     } else if #[cfg(target_os = "macos")] {
         use std::process::Command;
     }
-
 }
 
 pub fn get_free_memory() -> Option<u64> {
@@ -21,9 +19,9 @@ pub fn get_free_memory() -> Option<u64> {
                 let mut mem_info = MEMORYSTATUSEX {
                     dwLength: std::mem::size_of::<MEMORYSTATUSEX>() as u32,
                     ..Default::default()
-                }
+                };
 
-                return GlobalMemoryStatusEx(&mut mem_info) != 0 {
+                return if GlobalMemoryStatusEx(&mut mem_info).is_ok() {
                     Some(mem_info.ullAvailPhys / 1024)
                 } else {
                     None
