@@ -3,7 +3,7 @@
 
 use cfg_if::cfg_if;
 
-// TODO: Experiment with different allocators
+// TODO(#26): Experiment with different allocators
 // Since our program is memory-usage intensive, different allocators may provide performance speedups and use less memory
 
 // NOTE: With TCMAlloc the program is just slightly faster (by like 400ns/iter
