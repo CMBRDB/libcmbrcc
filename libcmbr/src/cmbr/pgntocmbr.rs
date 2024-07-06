@@ -126,7 +126,7 @@ impl CmbrFile {
                                     .san_to_cmbr(&mut *board.lock().unwrap(), m);
 
                                 if cmbrmv.is_err() {
-                                    // TODO: Skip game instead of not finishing convertion if invalid san occurs
+                                    // TODO(#24): Skip game instead of not finishing convertion if invalid san occurs
                                     eprintln!("[WARN] Not finishing convertion of N{game_i} due to invalid san.");
                                     skip_game = true;
                                     break;
