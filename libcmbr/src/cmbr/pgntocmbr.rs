@@ -109,7 +109,7 @@ impl CmbrFile {
             let cmbr_game = unsafe { file.games.get_mut(&(game_i as u32)).unwrap_unchecked() };
             let game = &ast[game_i];
 
-            // TODO: Support fen headers in libcmbr
+            // TODO(#30): Support fen headers in libcmbr
             board = Chess::new();
 
             let _ = cmbr_game.encountered_positions.try_insert(0, board
