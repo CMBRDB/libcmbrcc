@@ -35,7 +35,7 @@ cargo run -- help
 ```
 
 ## Contributing
-To contribute fork the repo, do your changes and submit a PR. View issues tagged with "good first issue" for stuff to-do. If your PR tries to tackle with performance, please include a simple benchmark/profile, showing your results.
+To contribute fork the repo, do your changes and submit a PR. Make sure that your PR passes `make check`. View issues tagged with "good first issue" for stuff to-do. If your PR tries to tackle with performance, please include a simple benchmark/profile, showing your results.
 
 ## Documentation
 The documentation (WIP/Unfinished) is provided as a latex and [pdf](./docs/CMBR.pdf) file
