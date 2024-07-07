@@ -3,7 +3,7 @@
 
 use cfg_if::cfg_if;
 
-// TODO: Add multithreading support
+// TODO(#27): Add multithreading support
 // TODO(#26): Experiment with different allocators
 // Since our program is memory-usage intensive, different allocators may provide performance speedups and use less memory
 
