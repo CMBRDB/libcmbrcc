@@ -2,7 +2,6 @@ use litemap::LiteMap;
 use pgn_lexer::parser::Token;
 use std::collections::VecDeque;
 
-// TODO(#17): Oh shit, currently this program uses 12x the memory of the input file :sob: maybe reduce that ??
 
 /// An enumeration representing different types of PGN tokens.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
