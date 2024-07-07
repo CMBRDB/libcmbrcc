@@ -1,7 +1,16 @@
 # CMBR
+
+### Table Of Contents
++ [Building](#building)
++ [Usage](#usage)
++ [Documentation](#documentation)
++ [License](#license)
++ [Contributing](#contributing)
++ [Contributors](#contributors)
+
 CMBR - Chess Move Binary Representation (WIP)
 
-### Building
+## Building
 For release builds
 
 ```bash
@@ -13,7 +22,7 @@ For development builds
 cargo build
 ```
 
-### Usage
+## Usage
 For usage run
 ```bash
 cmbrcc help
@@ -25,11 +34,14 @@ or
 cargo run -- help
 ```
 
-### Documentation
+## Contributing
+To contribute fork the repo, do your changes and submit a PR. View issues tagged with "good first issue" for stuff to-do. If your PR tries to tackle with performance, please include a simple benchmark/profile, showing your results.
+
+## Documentation
 The documentation (WIP/Unfinished) is provided as a latex and [pdf](./docs/CMBR.pdf) file
 
-### License
+## License
 The software is distributed under the GPL-3.0 License
 
-### Authors
+## Contributors
 - [datawater](https://github.com/datawater)
