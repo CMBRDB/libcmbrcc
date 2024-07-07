@@ -95,7 +95,6 @@ pub fn get_free_memory() -> Option<u64> {
 
             return Some(free_memory / 1024);
         } else {
-            // TODO(#25): Support getting free mem amount for *BSD and maybe ios/android
             return None;
         }
     }
