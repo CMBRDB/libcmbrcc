@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use super::u24;
 use crate::utils::def_enum;
 use litemap::LiteMap;
@@ -49,7 +51,8 @@ pub struct CmbrFile {
     // CMBR!
     magic_bytes: &'static str,
     pub is_compressed: bool,
-    pub games: Vec<CmbrGame>,
+    // Game Id
+    pub games: HashMap<u32, CmbrGame>,
 }
 
 /// A Struct denoting the structure of a game represented in CMBR
@@ -65,6 +68,7 @@ pub struct CmbrGame {
     pub result: char,
     /// Variation pointer (main variation is 0)
     pub variations: LiteMap<u16, CmbrVariation>,
+    pub crc64: u64,
 }
 
 /// A Struct denoting the structure of a variation represented in CMBR
@@ -86,7 +90,7 @@ impl CmbrFile {
         return Self {
             magic_bytes: "CMBR!",
             is_compressed,
-            games: Vec::with_capacity(16),
+            games: HashMap::with_capacity(16),
         };
     }
 }
@@ -97,6 +101,7 @@ impl CmbrGame {
             headers: LiteMap::with_capacity(7),
             variations: LiteMap::with_capacity(1),
             result: 'u',
+            crc64: 0,
         };
     }
 }

@@ -9,6 +9,37 @@ cfg_if! {
         use std::fs;
     } else if #[cfg(target_os = "macos")] {
         use std::process::Command;
+    } else if #[cfg(any(target_os = "freebsd", target_os = "dragonfly", target_os = "openbsd", target_os = "netbsd"))] {
+        use std::ffi::CString;
+        use std::mem;
+    }
+}
+
+#[cfg(any(
+    target_os = "freebsd",
+    target_os = "dragonfly",
+    target_os = "openbsd",
+    target_os = "netbsd"
+))]
+fn sysctl_by_name<T>(name: &str) -> Result<T, std::io::Error> {
+    let mut value: T = unsafe { mem::zeroed() };
+    let mut len = mem::size_of::<T>();
+
+    let cname = CString::new(name).expect("CString::new failed");
+    let ret = unsafe {
+        libc::sysctlbyname(
+            cname.as_ptr(),
+            &mut value as *mut _ as *mut libc::c_void,
+            &mut len,
+            std::ptr::null_mut(),
+            0,
+        )
+    };
+
+    if ret == -1 {
+        Err(std::io::Error::last_os_error())
+    } else {
+        Ok(value)
     }
 }
 
@@ -55,6 +86,14 @@ pub fn get_free_memory() -> Option<u64> {
             }
 
             return None;
+        } else if #[cfg(any(target_os = "freebsd", target_os = "dragonfly", target_os = "openbsd", target_os = "netbsd"))] {
+            let free_pages = sysctl_by_name::<libc::c_int>("vm.stats.vm.v_free_count").unwrap();
+            let inactive_p = sysctl_by_name::<libc::c_int>("vm.stats.vm.v_inactive_count").unwrap();
+            let page_size  = sysctl_by_name::<libc::c_int>("hw.pagesize").unwrap();
+
+            let free_memory = (free_pages as u64 + inactive_p as u64) * page_size as u64;
+
+            return Some(free_memory / 1024);
         } else {
             // TODO(#25): Support getting free mem amount for *BSD and maybe ios/android
             return None;

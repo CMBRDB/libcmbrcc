@@ -11,16 +11,12 @@ use std::mem::size_of;
 #[derive(Debug)]
 pub struct SanToCmbrMvConvertor {
     table: HashMap<String, CmbrMv>,
-    cache_hit: u32,
-    cache_miss: u32,
 }
 
 impl SanToCmbrMvConvertor {
     pub fn new(memory_limit_in_bytes: u64) -> Self {
         return Self {
             table: HashMap::with_capacity(memory_limit_in_bytes as usize / size_of::<CmbrMv>()),
-            cache_hit: 0,
-            cache_miss: 0,
         };
     }
 
@@ -78,14 +74,14 @@ impl SanToCmbrMvConvertor {
     ) -> Result<CmbrMv, Box<dyn Error>> {
         // SAFE: Safe if the function is called correctly.
         let san_string = unsafe { std::str::from_utf8_unchecked(san_bytes) }.to_owned();
-        // let smol_str = SmolStr::new_inline(&san_string);
+
         let san: SanPlus = san_string.parse()?;
         let san_move = san.san.to_move(board)?;
 
         let cmbr = self.table.get(&san_string);
         if cmbr.is_some() {
+            // SAFE: Safe
             let cmbr = unsafe { *cmbr.unwrap_unchecked() };
-            self.cache_hit += 1;
             board.play_unchecked(&san_move);
 
             return Ok(cmbr);
@@ -150,12 +146,7 @@ impl SanToCmbrMvConvertor {
         // SAFE: Safe
         board.play_unchecked(&san_move);
         self.table.insert(san_string, cmbr_move);
-        self.cache_miss += 1;
 
         return Ok(cmbr_move);
-    }
-
-    pub fn cache_ratio(&self) -> f64 {
-        return self.cache_hit as f64 / (self.cache_hit + self.cache_miss) as f64;
     }
 }

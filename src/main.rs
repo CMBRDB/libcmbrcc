@@ -2,7 +2,7 @@ mod eval_args;
 mod utils;
 
 use lexopt::prelude::*;
-use std::{process::exit, thread::available_parallelism};
+use std::process::exit;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum CommandE {
@@ -15,7 +15,6 @@ pub enum CommandE {
 pub struct Cmbr2PgnArgs {
     input: String,
     output: String,
-    threads_n: u16,
     table_mem_limit: u64,
 }
 
@@ -25,7 +24,6 @@ pub struct Pgn2CmbrArgs {
     output: String,
     enable_compression: bool,
     zstd_compression_level: u8,
-    threads_n: u16,
     table_mem_limit: u64,
 }
 
@@ -65,8 +63,8 @@ fn print_usage() {
     println!("\nUsage: cmbr {{COMMAND}} [OPTIONS]");
     println!("note: Options inside of square brackets ([]) are optional\n");
     println!("Commands:");
-    println!("  cmbr2pgn --input {{INPUT_FILE}} [--output {{OUTPUT_FILE}} --threads_n {{AMOUNT_OF_THREADS}} --enable_compression --table-memory-limit {{LIMIT}} ]");
-    println!("  pgn2cmbr  --input {{INPUT_FILE}} [--output {{OUTPUT_FILE}} --threads_n {{AMOUNT_OF_THREADS}} --table-memory-limit {{LIMIT}} ]");
+    println!("  cmbr2pgn --input {{INPUT_FILE}}  [--output {{OUTPUT_FILE}} --table-memory-limit {{LIMIT}} ]");
+    println!("  pgn2cmbr  --input {{INPUT_FILE}} [--output {{OUTPUT_FILE}} --table-memory-limit {{LIMIT}} --enable_compression ]");
     println!("  license");
 }
 
@@ -79,26 +77,6 @@ fn parse_args() -> Cli {
             Short('h') | Long("help") => {
                 print_usage();
                 exit(0);
-            }
-
-            Short('T') | Long("amount-of-threads") => {
-                let threads_n = parser.value().unwrap().parse();
-
-                if threads_n.is_err() {
-                    eprintln!("Invalid thread amount. Run `cmbrcc --help` for help.");
-                    std::process::exit(1);
-                }
-
-                let threads_n = threads_n.unwrap();
-
-                if let Some(CommandE::Cmbr2pgn(ref mut args)) = command {
-                    args.threads_n = threads_n;
-                } else if let Some(CommandE::Pgn2cmbr(ref mut args)) = command {
-                    args.threads_n = threads_n;
-                } else {
-                    eprintln!("Invalid option --amount-of-threads for this subcommand. Run `cmbrcc --help` for help.");
-                    std::process::exit(1);
-                }
             }
 
             Short('M') | Long("table-memory-limit") => {
@@ -181,7 +159,6 @@ fn parse_args() -> Cli {
                             command = Some(CommandE::Cmbr2pgn(Cmbr2PgnArgs {
                                 input: String::new(),
                                 output: String::new(),
-                                threads_n: 1,
                                 table_mem_limit: mem,
                             }));
                         }
@@ -192,7 +169,6 @@ fn parse_args() -> Cli {
                                 output: String::new(),
                                 enable_compression: false,
                                 zstd_compression_level: 9,
-                                threads_n: 1,
                                 table_mem_limit: 0,
                             }));
                         }
@@ -232,10 +208,6 @@ fn validate_args(cli: &mut Cli) {
                 exit(1);
             }
 
-            if args.threads_n == 0 {
-                args.threads_n = available_parallelism().unwrap().get().try_into().unwrap();
-            }
-
             if args.input.is_empty() {
                 eprintln!("[ERROR] Expected an input file name\nRun `cmbrcc --help` for help.");
                 exit(1);
@@ -243,10 +215,6 @@ fn validate_args(cli: &mut Cli) {
         }
 
         CommandE::Cmbr2pgn(args) => {
-            if args.threads_n == 0 {
-                args.threads_n = available_parallelism().unwrap().get().try_into().unwrap();
-            }
-
             if args.input.is_empty() {
                 eprintln!("[ERROR] Expected an input file name");
                 exit(1);

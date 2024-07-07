@@ -5,7 +5,6 @@ use libcmbr::pgn::parse_pgn;
 use memmap2::Mmap;
 use std::fs::File;
 use std::io::Write;
-use std::sync::{Arc, Mutex};
 
 pub fn eval_args(cli: &Cli) {
     match cli.command.as_ref().unwrap() {
@@ -36,20 +35,15 @@ pub fn eval_args(cli: &Cli) {
             let mut mmap = unsafe { mmap.unwrap_unchecked() };
 
             let ast = parse_pgn(&mut mmap);
-            let convertor = SanToCmbrMvConvertor::new(args.table_mem_limit);
+            let mut convertor = SanToCmbrMvConvertor::new(args.table_mem_limit);
 
-            let cmbr_file = CmbrFile::from_ast(
-                ast,
-                Arc::new(Mutex::new(convertor)),
-                args.enable_compression,
-                args.threads_n as usize,
-            )
-            .unwrap();
+            let cmbr_file =
+                CmbrFile::from_ast(ast, &mut convertor, args.enable_compression).unwrap();
 
             cfg_if::cfg_if! {
                 if #[cfg(feature = "bitcode")] {
                     let mut f = File::create(&args.output).unwrap();
-                    let serialized = bitcode::serialize(&*cmbr_file.lock().unwrap()).unwrap();
+                    let serialized = bitcode::serialize(&cmbr_file).unwrap();
                     f.write(&serialized[..]).unwrap();
                 }
             };

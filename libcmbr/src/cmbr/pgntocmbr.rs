@@ -4,10 +4,8 @@ use crate::pgn::{PgnGame, PgnToken};
 use crate::{cmbr::CmbrGame, error::LibCmbrError};
 use pgn_lexer::parser::Token;
 
-use rayon::prelude::*;
 use shakmaty::Chess;
 use std::str::from_utf8_unchecked;
-use std::sync::{Arc, Mutex};
 
 use phf::phf_map;
 
@@ -30,26 +28,21 @@ impl CmbrFile {
     // TODO(#22): Write tests for CmbrFile::from_ast
     pub fn from_ast(
         ast: Vec<PgnGame>,
-        convertor: Arc<Mutex<SanToCmbrMvConvertor>>,
+        convertor: &mut SanToCmbrMvConvertor,
         is_compressed: bool,
-        threads: usize,
-    ) -> Result<Arc<Mutex<Self>>, LibCmbrError> {
+    ) -> Result<Self, LibCmbrError> {
         debug_assert!(is_compressed == false);
 
-        rayon::ThreadPoolBuilder::new()
-            .num_threads(threads)
-            .build_global()
-            .unwrap();
+        let mut file = CmbrFile::new(is_compressed);
+        let mut board = Chess::new();
 
-        let file = Arc::new(Mutex::new(CmbrFile::new(is_compressed)));
-        let board = Arc::new(Mutex::new(Chess::new()));
+        (0..ast.len()).into_iter().for_each(|game_i| {
+            file.games.insert(game_i as u32, CmbrGame::new());
 
-        (0..ast.len()).into_par_iter().for_each(|game_i| {
-            file.lock().unwrap().games.push(CmbrGame::new());
-
-            let cmbr_game = &mut file.lock().unwrap().games[game_i];
+            // SAFE: Safe
+            let cmbr_game = unsafe { file.games.get_mut(&(game_i as u32)).unwrap_unchecked() };
             let game = &ast[game_i];
-            *board.lock().unwrap() = Chess::new();
+            board = Chess::new();
 
             {
                 let mut current_key: &[u8] = &[];
@@ -109,6 +102,7 @@ impl CmbrFile {
                         match t {
                             Token::NAG(n) => {
                                 let mut nag_numeral =
+                                    // SAFE: Safe
                                     u32::from_str_radix(unsafe { from_utf8_unchecked(*n) }, 10)
                                         .unwrap();
 
@@ -121,13 +115,11 @@ impl CmbrFile {
                             Token::Move(m) => {
                                 // TODO(#23): Handle errors in CmbrFile::from_ast
                                 let cmbrmv = convertor
-                                    .lock()
-                                    .unwrap()
-                                    .san_to_cmbr(&mut *board.lock().unwrap(), m);
+                                    .san_to_cmbr(&mut board, m);
 
                                 if cmbrmv.is_err() {
                                     // TODO(#24): Skip game instead of not finishing convertion if invalid san occurs
-                                    eprintln!("[WARN] Not finishing convertion of N{game_i} due to invalid san.");
+                                    eprintln!("[WARN] Not finishing convertion of N{game_i} due to invalid san. Error: {}", cmbrmv.err().unwrap());
                                     skip_game = true;
                                     break;
                                 }
@@ -150,9 +142,9 @@ impl CmbrFile {
                             Token::Commentary(c) => {
                                 cmbr_variation
                                     .comments
-                                    // SAFE: Safe
                                     .insert(
                                         current_move_number,
+                                        // SAFE: Safe
                                         unsafe { from_utf8_unchecked(c) }.to_owned(),
                                     );
                             }

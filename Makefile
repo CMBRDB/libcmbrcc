@@ -9,7 +9,7 @@ check: unsafe_check
 	cargo check
 	cargo fmt
 	cargo test
-	cargo deny check
+	cargo deny -L error check
 	cargo machete
 	cargo about generate ./scripts/about.hbs > NOTICE.html
 
