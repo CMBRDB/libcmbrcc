@@ -40,13 +40,9 @@ pub fn eval_args(cli: &Cli) {
             let cmbr_file =
                 CmbrFile::from_ast(ast, &mut convertor, args.enable_compression).unwrap();
 
-            cfg_if::cfg_if! {
-                if #[cfg(feature = "bitcode")] {
-                    let mut f = File::create(&args.output).unwrap();
-                    let serialized = bitcode::serialize(&cmbr_file).unwrap();
-                    f.write(&serialized[..]).unwrap();
-                }
-            };
+            let mut f = File::create(&args.output).unwrap();
+            let serialized = bitcode::serialize(&cmbr_file).unwrap();
+            f.write(&serialized[..]).unwrap();
         }
 
         crate::CommandE::License => {

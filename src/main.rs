@@ -23,7 +23,7 @@ pub struct Pgn2CmbrArgs {
     input: String,
     output: String,
     enable_compression: bool,
-    zstd_compression_level: u8,
+    compression_level: u8,
     table_mem_limit: u64,
 }
 
@@ -63,8 +63,8 @@ fn print_usage() {
     println!("\nUsage: cmbr {{COMMAND}} [OPTIONS]");
     println!("note: Options inside of square brackets ([]) are optional\n");
     println!("Commands:");
-    println!("  cmbr2pgn --input {{INPUT_FILE}}  [--output {{OUTPUT_FILE}} --table-memory-limit {{LIMIT}} ]");
-    println!("  pgn2cmbr  --input {{INPUT_FILE}} [--output {{OUTPUT_FILE}} --table-memory-limit {{LIMIT}} --enable_compression ]");
+    println!("  cmbr2pgn --input {{INPUT_FILE}} [--output {{OUTPUT_FILE}} --table-memory-limit {{LIMIT}} ]");
+    println!("  pgn2cmbr --input {{INPUT_FILE}} [--output {{OUTPUT_FILE}} --table-memory-limit {{LIMIT}} --enable_compression ]");
     println!("  license");
 }
 
@@ -168,7 +168,7 @@ fn parse_args() -> Cli {
                                 input: String::new(),
                                 output: String::new(),
                                 enable_compression: false,
-                                zstd_compression_level: 9,
+                                compression_level: 9,
                                 table_mem_limit: 0,
                             }));
                         }
@@ -203,8 +203,8 @@ fn validate_args(cli: &mut Cli) {
 
     match cli.command.as_mut().unwrap() {
         CommandE::Pgn2cmbr(args) => {
-            if args.zstd_compression_level < 1 || args.zstd_compression_level > 22 {
-                eprintln!("[ERROR] Zstd compression level should be between 1 and 22. Provided value is {}", args.zstd_compression_level);
+            if args.compression_level < 1 || args.compression_level > 22 {
+                eprintln!("[ERROR] Zstd compression level should be between 1 and 22. Provided value is {}", args.compression_level);
                 exit(1);
             }
 

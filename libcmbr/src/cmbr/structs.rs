@@ -4,8 +4,6 @@ use super::u24;
 use crate::utils::def_enum;
 use litemap::LiteMap;
 
-pub type CmbrMv = u24;
-
 def_enum! (
     #[doc = "An enum donating the flags that a CMBR-MV Can have"]
     pub CmbrMvFlags => u8 {
@@ -44,20 +42,30 @@ def_enum! (
         BlackLongCaslte => 0b1111,
 });
 
+/// CMBR Move representation
+pub type CmbrMv = u24;
+/// Calculated by `(VariationId << 16) | HalfMoveNumber`
+pub type MoveId = u32;
+pub type CmbrFen = String;
+
 /// A Struct denoting the structure of a CMBR file.
 #[cfg_attr(feature = "bitcode", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, PartialEq, Eq, Clone)]
+#[repr(C, align(1))]
 pub struct CmbrFile {
-    // CMBR!
+    /// Header: `CMBR!`
     magic_bytes: &'static str,
     pub is_compressed: bool,
-    // Game Id
+    /// Game Id
     pub games: HashMap<u32, CmbrGame>,
+    /// Positions stored as FEN
+    pub encountered_positions: HashMap<u32, CmbrFen>,
 }
 
 /// A Struct denoting the structure of a game represented in CMBR
 #[cfg_attr(feature = "bitcode", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, PartialEq, Eq, Clone)]
+#[repr(C, align(1))]
 pub struct CmbrGame {
     pub headers: LiteMap<String, String>,
     /// Possible values: 'w', 'b', 'd', 'u'.
@@ -68,7 +76,7 @@ pub struct CmbrGame {
     pub result: char,
     /// Variation pointer (main variation is 0)
     pub variations: LiteMap<u16, CmbrVariation>,
-    pub crc64: u64,
+    pub encountered_positions: HashMap<u32, u32>,
 }
 
 /// A Struct denoting the structure of a variation represented in CMBR
@@ -91,6 +99,7 @@ impl CmbrFile {
             magic_bytes: "CMBR!",
             is_compressed,
             games: HashMap::with_capacity(16),
+            encountered_positions: HashMap::with_capacity(1024),
         };
     }
 }
@@ -101,7 +110,7 @@ impl CmbrGame {
             headers: LiteMap::with_capacity(7),
             variations: LiteMap::with_capacity(1),
             result: 'u',
-            crc64: 0,
+            encountered_positions: HashMap::with_capacity(79),
         };
     }
 }
