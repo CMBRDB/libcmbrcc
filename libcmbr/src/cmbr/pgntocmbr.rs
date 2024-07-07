@@ -73,7 +73,7 @@ fn get_fen_from_board(board: &Chess) -> String {
 
 impl CmbrFile {
     // TODO(#22): Write tests for CmbrFile::from_ast
-    // TODO: Split the Headers, Moves and the encountered positions into seperate files and compress them seperatly
+    // TODO(#28): Split the Headers, Moves and the encountered positions into seperate files and compress them seperatly
     // TODO: Reduce the memory footprint of the program
     // Currently the program uses 33x amount of memory as the input file.
     pub fn from_ast(
