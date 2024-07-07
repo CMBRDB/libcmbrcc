@@ -13,7 +13,6 @@ pub fn eval_args(cli: &Cli) {
         }
 
         crate::CommandE::Pgn2cmbr(args) => {
-            // TODO(#14): Implement PGN2CMBR
             let file_name = args.input.clone();
             let file = File::open(&file_name);
 
