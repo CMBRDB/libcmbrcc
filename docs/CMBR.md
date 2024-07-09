@@ -1,26 +1,22 @@
 # CMBR Docs
-## datawizard
+### datawizard
 ## Specification Version 0.0.1
 
 **DISCLAIMER: The documentation is still very much so in the making, it is nothing more than a WIP.**
 
-## 1 Definitions
+## 1. Definitions
 
 * u24 - 24 bit unsigned integer
 * u8 - 8 bit unsigned integer
 * NAG - Numerical annotation glyph. See [Wikipedia](https://en.wikipedia.org/wiki/Numeric_Annotation_Glyphs) for more information. 
 * Variation table - A table that denotes
 
-## 2 Move notation
+## 2. Move notation
 
 The move is represented with an u24.
 
 ### 2.1 First part
-0b 000000 000000 000000000000 (1)
-|{z} |{z} |{z}| {z }
-To square From square Piece Flags
-
-[insert screenshot]
+<img width="460" alt="Screenshot 2024-07-09 at 2 25 13 PM" src="https://github.com/Whitegabriella789/CMBR/assets/172323441/a3074f80-cd5a-4fea-a09b-d3b2ea82e7e9">
 
 To and from squares are defined as an index of a chessboard square. The values are between 0-63. Where 0 is ’a1’ and 63 is ’h8’.
 
@@ -28,7 +24,8 @@ Pieces value represent some piece. See the table for more info
 
 The flags are defined as individual values. They’re bit-wise ored (|) together to get the final value.
 
-### CMBR Flag Enumeration
+
+## CMBR Flag Enumeration
 
 | Flag Name | Binary Value | Note |
 --- | --- | ---
@@ -43,7 +40,7 @@ The flags are defined as individual values. They’re bit-wise ored (|) together
 | FlagPromotesQueen | 0b01110000 | Move promotes to queen |
 | FlagIsVariationPointer | 0b10000000 | If this flag is set, the first 16 bits are replaced with an index to the variations table |
 
-### Pieces to Binary Value Table
+## Pieces to Binary Value Table
 | Piece | Binary Value |
 --- | ---
 | White pawn | 0b0000 |
