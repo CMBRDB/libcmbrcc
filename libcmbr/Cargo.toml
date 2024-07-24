@@ -5,6 +5,7 @@ edition = "2021"
 license = "GPL-3.0"
 
 [dependencies]
+bit-vec = "0.8.0"
 bitcode = { version = "0.6.0", features = ["derive", "serde"], default-features = false, optional = true }
 cfg-if = "1.0.0"
 litemap = { version = "0.7.3", features = ["serde"] }
