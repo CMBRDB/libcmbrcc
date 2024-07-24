@@ -44,7 +44,7 @@ mod cmbr_tests {
         let mut cmbrs: Vec<CmbrMv> = vec![];
 
         for game in ast {
-            for (_, variation) in game.0 .1 {
+            for (_, variation) in game.variations {
                 let mut board = Chess::new();
 
                 for token in variation.0 {
@@ -77,7 +77,7 @@ mod cmbr_tests {
 
         assert_eq!(expected_vec, cmbrs);
     }
-
+    
     #[cfg(feature = "benchmark")]
     #[bench]
     fn bench_san_cmbr(b: &mut Bencher) {

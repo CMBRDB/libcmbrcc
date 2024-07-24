@@ -49,9 +49,8 @@ pub type MoveId = u32;
 pub type CmbrFen = String;
 
 /// A Struct denoting the structure of a CMBR file.
-#[cfg_attr(feature = "bitcode", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, PartialEq, Eq, Clone)]
-#[repr(C, align(1))]
+#[cfg_attr(feature = "bitcode", derive(serde::Serialize, serde::Deserialize))]
 pub struct CmbrFile {
     /// Header: `CMBR!`
     magic_bytes: &'static str,
@@ -65,9 +64,8 @@ pub struct CmbrFile {
 /// A Struct denoting the structure of a game represented in CMBR
 #[cfg_attr(feature = "bitcode", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, PartialEq, Eq, Clone)]
-#[repr(C, align(1))]
 pub struct CmbrGame {
-    pub headers: LiteMap<String, String>,
+    pub headers: Vec<(String, String)>,
     /// Possible values: 'w', 'b', 'd', 'u'.
     ///     'w': White won;
     ///     'b': Black won;
@@ -86,7 +84,7 @@ pub struct CmbrVariation {
     pub starts_at: u16,
     pub moves: Vec<CmbrMv>,
     /// The u16 denotes of which half move the comment is on
-    pub comments: LiteMap<u16, String>,
+    pub comments: Vec<(u16, String)>,
 }
 
 impl CmbrFile {
@@ -107,7 +105,7 @@ impl CmbrFile {
 impl CmbrGame {
     pub fn new() -> Self {
         return Self {
-            headers: LiteMap::with_capacity(7),
+            headers: Vec::with_capacity(7),
             variations: LiteMap::with_capacity(1),
             result: 'u',
             encountered_positions: HashMap::with_capacity(79),
@@ -121,7 +119,7 @@ impl CmbrVariation {
             starts_at,
             // https://chess.stackexchange.com/a/4899
             moves: Vec::with_capacity(79),
-            comments: LiteMap::new(),
+            comments: Vec::new(),
         };
     }
 }

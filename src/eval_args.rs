@@ -7,9 +7,10 @@ use std::fs::File;
 use std::io::Write;
 
 pub fn eval_args(cli: &Cli) {
+    
     match cli.command.as_ref().unwrap() {
         crate::CommandE::Cmbr2pgn(_args) => {
-            // TODO(#1): Implement CMBR2PGN
+            todo!()
         }
 
         crate::CommandE::Pgn2cmbr(args) => {
@@ -40,7 +41,7 @@ pub fn eval_args(cli: &Cli) {
                 CmbrFile::from_ast(ast, &mut convertor, args.enable_compression).unwrap();
 
             let mut f = File::create(&args.output).unwrap();
-            let serialized = bitcode::serialize(&cmbr_file).unwrap();
+            let serialized = cmbr_file.serialize();
             f.write(&serialized[..]).unwrap();
         }
 

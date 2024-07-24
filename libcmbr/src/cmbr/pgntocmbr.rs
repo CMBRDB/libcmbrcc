@@ -119,17 +119,17 @@ impl CmbrFile {
             {
                 let mut current_key: &[u8] = &[];
 
-                for header in &game.0 .0 {
+                for header in &game.global_tokens {
                     match header {
                         Token::Result(r) => cmbr_game.result = RESULT_TO_CHAR[r],
                         Token::TagSymbol(k) => current_key = k,
 
                         // SAFE: Safe
                         Token::TagString(v) => unsafe {
-                            let _ = cmbr_game.headers.insert(
+                            let _ = cmbr_game.headers.push((
                                 from_utf8_unchecked(current_key).to_owned(),
                                 from_utf8_unchecked(v).to_owned(),
-                            );
+                            ));
                         },
 
                         _ => {}
@@ -137,7 +137,7 @@ impl CmbrFile {
                 }
             }
 
-            let variations = &game.0 .1;
+            let variations = &game.variations;
             let variations_iter = variations.iter();
 
             let mut variation_pointers: HashMap<u16, u16> = HashMap::with_capacity(1);
@@ -248,11 +248,11 @@ impl CmbrFile {
                             Token::Commentary(c) => {
                                 cmbr_variation
                                     .comments
-                                    .insert(
+                                    .push((
                                         current_move_number,
                                         // SAFE: Safe
                                         unsafe { from_utf8_unchecked(c) }.to_owned(),
-                                    );
+                                    ));
                             }
 
                             _ => {}
