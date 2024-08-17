@@ -98,8 +98,8 @@ impl SanToCmbrMvConvertor {
                 promotion,
             } => Self::shakmaty_move_to_cmbr(
                 role,
-                &from,
-                &to,
+                from,
+                to,
                 &capture.is_some(),
                 promotion,
                 &san.suffix,
@@ -134,8 +134,8 @@ impl SanToCmbrMvConvertor {
 
             shakmaty::Move::EnPassant { from, to } => Self::shakmaty_move_to_cmbr(
                 &Role::Pawn,
-                &from,
-                &to,
+                from,
+                to,
                 &true,
                 &None,
                 &san.suffix,

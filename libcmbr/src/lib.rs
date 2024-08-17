@@ -1,5 +1,5 @@
-#![allow(non_upper_case_globals)]
-#![feature(test, map_try_insert)]
+#![allow(non_upper_case_globals, clippy::needless_return)]
+#![feature(test, map_try_insert, stmt_expr_attributes)]
 
 use cfg_if::cfg_if;
 

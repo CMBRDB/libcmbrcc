@@ -81,7 +81,7 @@ impl CmbrFile {
         convertor: &mut SanToCmbrMvConvertor,
         is_compressed: bool,
     ) -> Result<Self, Box<dyn Error>> {
-        debug_assert!(is_compressed == false);
+        debug_assert!(!is_compressed);
 
         let mut file = CmbrFile::new(is_compressed);
         let mut board = Chess::new();
@@ -97,7 +97,7 @@ impl CmbrFile {
 
         let len = ast.len();
 
-        (0..len).into_iter().for_each(|game_i| {
+        (0..len).for_each(|game_i| {
             if game_i % 1000 == 0 || game_i == len {
                 print!("{}\r", game_i as f64 / len as f64 * 100.0);
                 let _ = std::io::stdout().flush();
@@ -126,7 +126,7 @@ impl CmbrFile {
 
                         // SAFE: Safe
                         Token::TagString(v) => unsafe {
-                            let _ = cmbr_game.headers.push((
+                            cmbr_game.headers.push((
                                 from_utf8_unchecked(current_key).to_owned(),
                                 from_utf8_unchecked(v).to_owned(),
                             ));
@@ -144,7 +144,7 @@ impl CmbrFile {
             variation_pointers.insert(0, 0);
 
             for (id, variation) in variations_iter {
-                if variation.0.len() == 0 {
+                if variation.0.is_empty() {
                     eprintln!("[WARN] Empty variation on game N{game_i}. Skipping game");
                     break;
                 }
@@ -198,8 +198,7 @@ impl CmbrFile {
                             Token::NAG(n) => {
                                 let mut nag_numeral =
                                     // SAFE: Safe
-                                    u32::from_str_radix(unsafe { from_utf8_unchecked(*n) }, 10)
-                                        .unwrap();
+                                    (unsafe { from_utf8_unchecked(n) }).parse::<u32>().unwrap();
 
                                 nag_numeral <<= 8;
                                 nag_numeral |= 0b00001000;
@@ -237,7 +236,7 @@ impl CmbrFile {
                             }
 
                             Token::MoveAnnotation(an) => cmbr_variation.moves.push(
-                                (((MOVE_ANNOTATION_TO_NAG[an] as u32) << 8) as u32 | 0b10000000)
+                                (((MOVE_ANNOTATION_TO_NAG[an] as u32) << 8) | 0b10000000)
                                     .into(),
                             ),
 

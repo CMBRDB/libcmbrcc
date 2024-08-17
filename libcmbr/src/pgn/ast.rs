@@ -26,7 +26,7 @@ pub struct PgnVariation<'a>(pub Vec<PgnToken<'a>>);
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct PgnGame<'a> {
     pub global_tokens: Vec<Token<'a>>,
-    pub variations: LiteMap<u16, PgnVariation<'a>>
+    pub variations: LiteMap<u16, PgnVariation<'a>>,
 }
 
 /// Builds an ast (represented as `a Vec<PgnGame>`) from the inputted Token list
@@ -44,7 +44,7 @@ pub fn build_pgn_ast<'a>(tokens: &mut VecDeque<Token<'a>>) -> Vec<PgnGame<'a>> {
         value.variations.insert(0, PgnVariation::default());
     }
 
-    while tokens.len() != 0 {
+    while !tokens.is_empty() {
         next_token(
             tokens,
             &mut tree,
@@ -64,7 +64,7 @@ macro_rules! push_token {
         $tree
             .get_mut($game_number as usize)
             .unwrap()
-             .variations
+            .variations
             .get_mut($variation_depth)
             .unwrap()
             .0
@@ -95,14 +95,14 @@ fn next_token<'a>(
         Token::TagSymbol(_) | Token::TagString(_) => tree
             .get_mut(*game_number as usize)
             .unwrap()
-             .global_tokens
+            .global_tokens
             .push(token),
         Token::NullMove(_) => {}
         Token::EscapeComment(_) => { /* NOTE: IDK what to do with this */ }
         Token::Result(_) => {
             tree.get_mut(*game_number as usize)
                 .unwrap()
-                 .global_tokens
+                .global_tokens
                 .push(token);
 
             *game_number += 1;
@@ -114,7 +114,9 @@ fn next_token<'a>(
                 let value = &mut tree.get_unchecked_mut(*game_number as usize);
 
                 value.global_tokens = Vec::new();
-                value.variations.insert(variation_depth, PgnVariation::default());
+                value
+                    .variations
+                    .insert(variation_depth, PgnVariation::default());
             }
         }
         Token::StartVariation(_) => {
@@ -132,7 +134,9 @@ fn next_token<'a>(
             // SAFE: Safe
             unsafe {
                 let value = &mut tree.get_unchecked_mut(*game_number as usize);
-                value.variations.insert(new_variation_depth, PgnVariation::default());
+                value
+                    .variations
+                    .insert(new_variation_depth, PgnVariation::default());
             }
 
             next_token(
@@ -148,7 +152,7 @@ fn next_token<'a>(
         }
     }
 
-    if tokens.len() != 0 {
+    if !tokens.is_empty() {
         next_token(
             tokens,
             tree,

@@ -13,7 +13,7 @@ def_enum! (
         FlagCapture => 1 << 2,
         FlagNag     => 1 << 3, // If this flag is set, the first 8 bits of the CMBR are replaced with a NAG index (https://w.wiki/AWUT)
 
-        FlagPromotesBishop => (1 << 6) | 0b000000,
+        FlagPromotesBishop => (1 << 6),
         FlagPromotesKnight => (1 << 6) | 0b010000,
         FlagPromotesRook   => (1 << 6) | 0b100000,
         FlagPromotesQueen  => (1 << 6) | 0b110000,
@@ -63,7 +63,7 @@ pub struct CmbrFile {
 
 /// A Struct denoting the structure of a game represented in CMBR
 #[cfg_attr(feature = "bitcode", derive(serde::Serialize, serde::Deserialize))]
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Default)]
 pub struct CmbrGame {
     pub headers: Vec<(String, String)>,
     /// Possible values: 'w', 'b', 'd', 'u'.
