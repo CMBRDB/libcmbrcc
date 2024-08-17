@@ -131,7 +131,7 @@ impl CompressedPositionConvertable<Chess> for Chess {
 
                     // SAFE: Safe
                     let piece = unsafe {
-                        (bitvec.get_unchecked(read_piece_count * 4 + 0) as u8) << 0
+                        (bitvec.get_unchecked(read_piece_count * 4) as u8)
                             | (bitvec.get_unchecked(read_piece_count * 4 + 1) as u8) << 1
                             | (bitvec.get_unchecked(read_piece_count * 4 + 2) as u8) << 2
                             | (bitvec.get_unchecked(read_piece_count * 4 + 3) as u8) << 3
@@ -174,7 +174,7 @@ impl CompressedPositionConvertable<Chess> for Chess {
 
         bitvec_i += 1;
 
-        let can_castle_wk = if bitvec.get(bitvec_i + 0).unwrap() {
+        let can_castle_wk = if bitvec.get(bitvec_i).unwrap() {
             "K"
         } else {
             ""
@@ -211,7 +211,7 @@ impl CompressedPositionConvertable<Chess> for Chess {
         bitvec_i += 4;
 
         let en_passant_bits = unsafe {
-            (bitvec.get_unchecked(bitvec_i + 0) as u8) << 0
+            (bitvec.get_unchecked(bitvec_i) as u8)
                 | (bitvec.get(bitvec_i + 1).unwrap() as u8) << 1
                 | (bitvec.get(bitvec_i + 2).unwrap() as u8) << 2
                 | (bitvec.get(bitvec_i + 3).unwrap() as u8) << 3
@@ -299,7 +299,6 @@ mod tests {
             b.iter(|| {
                 let pytorch_position = Chess::to_pytorch_position(&position);
             });
-
         }
     }
 }

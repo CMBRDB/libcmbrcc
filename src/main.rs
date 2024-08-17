@@ -1,3 +1,5 @@
+#![allow(clippy::needless_return)]
+
 mod eval_args;
 mod utils;
 
@@ -40,7 +42,7 @@ enum ParseMemoryError {
 
 fn parse_memory_amount(s: &str) -> Result<u64, ParseMemoryError> {
     let pos = s
-        .find(|c: char| !c.is_digit(10))
+        .find(|c: char| !c.is_ascii_digit())
         .ok_or(ParseMemoryError::InvalidFormat)?;
 
     let (number_str, unit_str) = s.split_at(pos);

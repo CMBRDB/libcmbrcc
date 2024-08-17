@@ -7,7 +7,6 @@ use std::fs::File;
 use std::io::Write;
 
 pub fn eval_args(cli: &Cli) {
-    
     match cli.command.as_ref().unwrap() {
         crate::CommandE::Cmbr2pgn(_args) => {
             todo!()
