@@ -74,6 +74,11 @@ mod cmbr_tests {
     }
 
     // FIXME: bench_san_cmbr is broken
+    #[cfg(feature = "benchmark")]
+    #[bench]
+    fn bench_san_cmbr(_b: &mut Bencher) {
+        unimplemented!()
+    }
     // #[cfg(feature = "benchmark")]
     // #[bench]
     // fn bench_san_cmbr(b: &mut Bencher) {
