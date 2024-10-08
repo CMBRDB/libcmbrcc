@@ -20,7 +20,6 @@ cfg_if! {
 pub mod cmbr;
 pub mod error;
 pub mod pgn;
-pub mod position;
 mod utils;
 
 pub use shakmaty::Chess as ChessBoard;

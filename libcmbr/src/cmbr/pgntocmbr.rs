@@ -51,12 +51,15 @@ fn get_fen_from_board(board: &Chess) -> String {
     if castles.has(Color::White, CastlingSide::KingSide) {
         fen.push('K')
     };
+
     if castles.has(Color::White, CastlingSide::QueenSide) {
         fen.push('Q')
     };
+    
     if castles.has(Color::Black, CastlingSide::KingSide) {
         fen.push('k')
     };
+    
     if castles.has(Color::Black, CastlingSide::QueenSide) {
         fen.push('q')
     };
@@ -236,7 +239,7 @@ impl CmbrFile {
                             }
 
                             Token::MoveAnnotation(an) => cmbr_variation.moves.push(
-                                (((MOVE_ANNOTATION_TO_NAG[an] as u32) << 8) | 0b10000000)
+                                (((MOVE_ANNOTATION_TO_NAG[*an] as u32) << 8) | 0b10000000)
                                     .into(),
                             ),
 
