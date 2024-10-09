@@ -50,7 +50,6 @@ pub type CmbrFen = String;
 
 /// A Struct denoting the structure of a CMBR file.
 #[derive(Debug, PartialEq, Eq, Clone)]
-#[cfg_attr(feature = "bitcode", derive(serde::Serialize, serde::Deserialize))]
 pub struct CmbrFile {
     /// Header: `CMBR!`
     magic_bytes: &'static str,
@@ -62,7 +61,6 @@ pub struct CmbrFile {
 }
 
 /// A Struct denoting the structure of a game represented in CMBR
-#[cfg_attr(feature = "bitcode", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, PartialEq, Eq, Clone, Default)]
 pub struct CmbrGame {
     pub headers: Vec<(String, String)>,
@@ -78,7 +76,6 @@ pub struct CmbrGame {
 }
 
 /// A Struct denoting the structure of a variation represented in CMBR
-#[cfg_attr(feature = "bitcode", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct CmbrVariation {
     pub starts_at: u16,

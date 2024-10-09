@@ -8,8 +8,10 @@ pub use santocmbrmv::*;
 pub use structs::*;
 pub use u24_impl::*;
 
+use std::error::Error;
+
 impl CmbrFile {
-    pub fn serialize(&self) -> Vec<u8> {
-        return bitcode::serialize(&self).unwrap();
+    pub fn dump_to_db(&self, _db_name: &str) -> Result<(), Box<dyn Error>> {
+        todo!();
     }
 }

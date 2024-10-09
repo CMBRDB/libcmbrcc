@@ -4,7 +4,6 @@ use libcmbr::pgn::parse_pgn;
 
 use memmap2::Mmap;
 use std::fs::File;
-use std::io::Write;
 
 pub fn eval_args(cli: &Cli) {
     match cli.command.as_ref().unwrap() {
@@ -39,9 +38,9 @@ pub fn eval_args(cli: &Cli) {
             let cmbr_file =
                 CmbrFile::from_ast(ast, &mut convertor, args.enable_compression).unwrap();
 
-            let mut f = File::create(&args.output).unwrap();
-            let serialized = cmbr_file.serialize();
-            f.write(&serialized[..]).unwrap();
+            let _serialized = cmbr_file.dump_to_db(&args.output);
+            todo!()
+            // f.write(&serialized[..]).unwrap();
         }
 
         crate::CommandE::License => {
