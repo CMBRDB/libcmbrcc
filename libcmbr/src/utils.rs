@@ -1,4 +1,7 @@
-use std::{collections::{BTreeSet, VecDeque}, ops::{BitAnd, Shl, Shr, Sub}};
+use std::{
+    collections::{BTreeSet, VecDeque},
+    ops::{BitAnd, Shl, Shr, Sub},
+};
 
 // Macro stolen from https://stackoverflow.com/a/62759540
 macro_rules! def_enum {
@@ -36,7 +39,8 @@ where
 }
 
 pub(crate) fn nth_prime_number<T>(n: u32) -> T
-where T: std::cmp::Ord + std::clone::Clone + std::convert::From<u32>
+where
+    T: std::cmp::Ord + std::clone::Clone + std::convert::From<u32>,
 {
     const PRIMES_LOOKUP: &[u32] = &[
         1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83,

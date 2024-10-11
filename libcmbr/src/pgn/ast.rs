@@ -124,7 +124,9 @@ fn next_token<'a>(
             }
         }
         Token::StartVariation(_) => {
-            let new_variation_depth = nth_prime_number::<u32>(*amount_of_encountered_variations as u32) * (variation_depth + 1);
+            let new_variation_depth =
+                nth_prime_number::<u32>(*amount_of_encountered_variations as u32)
+                    * (variation_depth + 1);
 
             *amount_of_encountered_variations += 1;
 

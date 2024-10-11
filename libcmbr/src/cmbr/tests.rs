@@ -77,6 +77,6 @@ mod cmbr_tests {
     // #[cfg(feature = "benchmark")]
     // #[bench]
     // fn bench_san_cmbr(_b: &mut Bencher) {
-    //     
+    //
     // }
 }
