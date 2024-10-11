@@ -1,6 +1,7 @@
 use super::{CmbrFile, SanToCmbrMvConvertor};
 use crate::cmbr::CmbrGame;
 use crate::cmbr::CmbrVariation;
+use crate::pgn::VariationPointerT;
 use crate::pgn::{PgnGame, PgnToken};
 use pgn_lexer::parser::Token;
 
@@ -143,7 +144,7 @@ impl CmbrFile {
             let variations = &game.variations;
             let variations_iter = variations.iter();
 
-            let mut variation_pointers: HashMap<u16, u16> = HashMap::with_capacity(1);
+            let mut variation_pointers: HashMap<VariationPointerT, VariationPointerT> = HashMap::with_capacity(1);
             variation_pointers.insert(0, 0);
 
             for (id, variation) in variations_iter {

@@ -2,13 +2,17 @@ use litemap::LiteMap;
 use pgn_lexer::parser::Token;
 use std::collections::VecDeque;
 
+use crate::utils::nth_prime_number;
+
+pub type VariationPointerT = u32;
+
 /// An enumeration representing different types of PGN tokens.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub enum PgnToken<'a> {
     /// Represents a token specific to the game, such as a move, header, or result.
     Token(Token<'a>),
     /// Represents a pointer to a variation.
-    VariationPointer(u16),
+    VariationPointer(VariationPointerT),
     /// Represents no token. This is the default variant.
     #[default]
     None,
@@ -26,7 +30,7 @@ pub struct PgnVariation<'a>(pub Vec<PgnToken<'a>>);
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct PgnGame<'a> {
     pub global_tokens: Vec<Token<'a>>,
-    pub variations: LiteMap<u16, PgnVariation<'a>>,
+    pub variations: LiteMap<VariationPointerT, PgnVariation<'a>>,
 }
 
 /// Builds an ast (represented as `a Vec<PgnGame>`) from the inputted Token list
@@ -76,7 +80,7 @@ fn next_token<'a>(
     tokens: &mut VecDeque<Token<'a>>,
     tree: &mut Vec<PgnGame<'a>>,
     game_number: &mut u32,
-    variation_depth: u16,
+    variation_depth: VariationPointerT,
     amount_of_encountered_variations: &mut u16,
 ) {
     // NOTE: I don't know if this is slow. (Like this whole approach) I'm just gonna pretend it isn't until it causes problems
@@ -120,7 +124,7 @@ fn next_token<'a>(
             }
         }
         Token::StartVariation(_) => {
-            let new_variation_depth = *amount_of_encountered_variations * (variation_depth + 1);
+            let new_variation_depth = nth_prime_number::<u32>(*amount_of_encountered_variations as u32) * (variation_depth + 1);
 
             *amount_of_encountered_variations += 1;
 

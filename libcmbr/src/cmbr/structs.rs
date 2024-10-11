@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use super::u24;
-use crate::utils::def_enum;
+use crate::{pgn::VariationPointerT, utils::def_enum};
 use litemap::LiteMap;
 
 def_enum! (
@@ -73,7 +73,7 @@ pub struct CmbrGame {
     ///     'u': Undefined.
     pub result: char,
     /// Variation pointer (main variation is 0)
-    pub variations: LiteMap<u16, CmbrVariation>,
+    pub variations: LiteMap<VariationPointerT, CmbrVariation>,
     pub encountered_positions: HashMap<u32, u32>,
 }
 
