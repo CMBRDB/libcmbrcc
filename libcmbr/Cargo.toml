@@ -11,10 +11,12 @@ shakmaty = "0.27.0"
 pgn-lexer = { git = "https://github.com/datawater/pgn-lexer" }
 litemap = { version = "0.7.3", features = ["serde"] }
 phf = { version = "0.11.2", features = ["macros"] }
+sea-orm = { version = "1.0.1", default-features = false, features = ["macros", "sqlx-sqlite", "rust_decimal", "runtime-async-std-native-tls", "runtime-async-std"], optional = true }
 
 [features]
-default = [ "jemalloc" ]
+default = [ "jemalloc", "sqlite" ]
 jemalloc = ["dep:tikv-jemallocator"]
+sqlite = [ "dep:sea-orm" ]
 safe_u24 = []
 benchmark = []
 serde = []
